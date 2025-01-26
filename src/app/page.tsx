@@ -24,7 +24,7 @@ const SignUp = () => {
 
   const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
 
     // Reset errors
