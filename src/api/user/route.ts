@@ -46,11 +46,9 @@ export async function POST(req: Request) {
       },
     });
 
-    // Exclude password from the response
-    const { password: _, ...rest } = newUser;
     
     return NextResponse.json(
-      { user: rest, message: "User created successfully" },
+      { user: newUser, message: "User created successfully" },
       { status: 201 }
     );
   } catch (error) {
