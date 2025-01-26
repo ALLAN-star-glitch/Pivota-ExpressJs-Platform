@@ -4,10 +4,11 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { z } from 'zod'; // Import Zod
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
-    userName: '',
+    username: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -15,63 +16,130 @@ const SignUp = () => {
     confirmPassword: '',
     phone: '',
   });
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [phoneError, setPhoneError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [confirmPasswordError, setConfirmPasswordError] = useState('');
-
+  const [loading, setLoading] = useState(false); // Loading state
+  const [errors, setErrors] = useState<any>({});
   const router = useRouter();
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  // Function to generate a random password
+  const generateRandomPassword = () => {
+    const length = 12;
+    const charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    return password;
+  };
+
+  // Define the validation schema with Zod
+  const userSchema = z.object({
+    username: z.string().min(1, { message: 'User name is required' }),
+    firstName: z.string().min(1, { message: 'First name is required' }),
+    lastName: z.string().min(1, { message: 'Last name is required' }),
+    email: z.string().email({ message: 'Invalid email address' }),
+    phone: z.string().regex(/^(?:\+2547|07)\d{8}$/, {
+      message: 'Please enter a valid Kenyan phone number', 
+    }),
+    password: z
+      .string()
+      .min(8, { message: 'Password must be at least 8 characters' })
+      .regex(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/, {
+        message:
+          'Password must include 1 uppercase letter, 1 number, and 1 special character',
+      }),
+    confirmPassword: z.string().min(1, { message: 'Confirm password is required' }),
+  });
+
+
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+  
+    // Reset errors before validation
+    setErrors({});
 
-    // Reset errors
-    setPhoneError('');
-    setEmailError('');
-    setPasswordError('');
-    setConfirmPasswordError('');
-
-    let isValid = true;
-
-    // Validate Kenyan phone number
-    const phonePattern = /^(?:\+254|07)\d{8}$/;
-    if (!phonePattern.test(formData.phone)) {
-      setPhoneError('Please enter a valid Kenyan phone number');
-      isValid = false;
+    setLoading(true); // Start loading
+  
+    try {
+      // Parse and validate the data using the schema
+      userSchema.parse(formData);
+  
+      // Check if password and confirmPassword match
+      if (formData.password !== formData.confirmPassword) {
+        setErrors((prevErrors: any) => ({
+          ...prevErrors,
+          confirmPassword: 'Passwords do not match',
+        }));
+        setLoading(false); // Stop loading 
+        return;
+      }
+  
+      // Call onSubmit if validation passes
+      await onSubmit(formData);
+  
+    } catch (error) {
+      // Handle validation errors from Zod
+      if (error instanceof z.ZodError) {
+        const newErrors: { [key: string]: string } = error.errors.reduce((acc, err) => {
+          acc[err.path[0]] = err.message;
+          return acc;
+        }, {} as { [key: string]: string });
+  
+        setErrors(newErrors); // Update state with validation errors
+      }
     }
 
-    // Validate email pattern
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailPattern.test(formData.email)) {
-      setEmailError('Please enter a valid email address');
-      isValid = false;
-    }
-
-    // Password strength validation
-    const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    if (!passwordPattern.test(formData.password)) {
-      setPasswordError(
-        'Password must be at least 8 characters long and include 1 number, 1 uppercase letter, and 1 special character'
-      );
-      isValid = false;
-    }
-
-    // Confirm password validation
-    if (formData.password !== formData.confirmPassword) {
-      setConfirmPasswordError('Passwords do not match');
-      isValid = false;
-    }
-
-    // If all validations pass, proceed with form submission
-    if (isValid) {
-      router.push('/dashboard/super-admin');
+    setLoading(false); // Stop loading after validation
+  };
+  
+  const onSubmit = async (values: z.infer<typeof userSchema>) => {
+    try {
+      const response = await fetch("/api/user", {
+        method: "POST",  // Make sure to use "POST" instead of "Post"
+        headers: { 
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: values.username,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          email: values.email,
+          phone: values.phone,
+          password: values.password,
+          confirmPassword: values.confirmPassword,
+        })
+      });
+  
+      if (response.ok) {
+        // If no errors, proceed with form submission
+        router.push('/dashboard/super-admin');
+      } else {
+        const errorData = await response.json();
+        setErrors((prevErrors: any) => ({
+          ...prevErrors,
+          apiError: errorData.message || 'Registration failed, please try again later.',
+        }));
+      }
+    } catch (error) {
+      console.error('API error:', error);
+      setErrors((prevErrors: any) => ({
+        ...prevErrors,
+        apiError: 'An error occurred while processing your request.',
+      }));
     }
   };
+  
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-b from-pivotaNavy to-pivotaTeal">
+      {/* Loading Bar */}
+      {loading && (
+      <div className="fixed top-0 left-0 w-full h-2 bg-gradient-to-r from-pivotaTeal via-pivotaAqua to-pivotaCoral animate-pulse z-50"></div>
+      )}
+
       {/* LEFT - Image */}
       <div className="w-full md:w-1/2 h-1/2 md:h-screen bg-cover bg-center relative">
         <Image
@@ -95,14 +163,15 @@ const SignUp = () => {
             </label>
             <input
               type="text"
-              id="userName"
-              name="userName"
+              id="username"
+              name="username"
               placeholder="e.g. johndoe123"
               className="w-2/3 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              value={formData.userName}
-              onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
+              value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
               required
             />
+            {errors.username && <p className="text-red-500 text-xs mt-2">{errors.username}</p>}
           </div>
 
           {/* Horizontal Form Fields */}
@@ -125,7 +194,7 @@ const SignUp = () => {
                 onChange={(e) => setFormData({ ...formData, [id]: e.target.value })}
                 required
               />
-              {id === 'email' && emailError && <p className="text-red-500 text-xs mt-2">{emailError}</p>}
+              {errors[id] && <p className="text-red-500 text-xs mt-2">{errors[id]}</p>}
             </div>
           ))}
 
@@ -154,9 +223,23 @@ const SignUp = () => {
               />
             </div>
           </div>
-          {phoneError && <p className="text-red-500 text-xs mt-2">{phoneError}</p>}
+          {errors.phone && <p className="text-red-500 text-xs mt-2">{errors.phone}</p>}
 
-          {/* Password */}
+          {/* Generate Password Feature */}
+          <div className="mb-4 flex justify-between items-center">
+            <label htmlFor="password" className="w-1/3 text-sm text-gray-700 font-medium cursor-pointer">
+            
+            </label>
+            <button
+              type="button"
+              className="text-sm text-teal-600 hover:text-teal-700"
+              onClick={() => setFormData({ ...formData, password: generateRandomPassword() })}
+            >
+              Generate Password
+            </button>
+          </div>
+
+          {/* Password and Confirm Password fields */}
           {[
             { label: 'Password', id: 'password', show: showPassword, setShow: setShowPassword, value: formData.password },
             {
@@ -190,8 +273,7 @@ const SignUp = () => {
                   {show ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
                 </button>
               </div>
-              {id === 'password' && passwordError && <p className="text-red-500 text-xs mt-2">{passwordError}</p>}
-              {id === 'confirmPassword' && confirmPasswordError && <p className="text-red-500 text-xs mt-2">{confirmPasswordError}</p>}
+              {errors[id] && <p className="text-red-500 text-xs mt-2">{errors[id]}</p>}
             </div>
           ))}
 
