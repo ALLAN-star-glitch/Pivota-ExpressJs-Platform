@@ -1,5 +1,4 @@
-'use client'
-
+"use client"
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -8,6 +7,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
+    userName: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -24,53 +24,51 @@ const SignUp = () => {
 
   const router = useRouter();
 
-
-  
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     // Reset errors
     setPhoneError('');
     setEmailError('');
     setPasswordError('');
     setConfirmPasswordError('');
-  
+
     let isValid = true;
-  
+
     // Validate Kenyan phone number
     const phonePattern = /^(?:\+254|07)\d{8}$/;
     if (!phonePattern.test(formData.phone)) {
       setPhoneError('Please enter a valid Kenyan phone number');
       isValid = false;
     }
-  
+
     // Validate email pattern
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(formData.email)) {
       setEmailError('Please enter a valid email address');
       isValid = false;
     }
-  
-    // Password strength validation (at least 8 characters, 1 number, 1 uppercase, 1 special character)
+
+    // Password strength validation
     const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     if (!passwordPattern.test(formData.password)) {
-      setPasswordError('Password must be at least 8 characters long and include 1 number, 1 uppercase letter, and 1 special character');
+      setPasswordError(
+        'Password must be at least 8 characters long and include 1 number, 1 uppercase letter, and 1 special character'
+      );
       isValid = false;
     }
-  
+
     // Confirm password validation
     if (formData.password !== formData.confirmPassword) {
       setConfirmPasswordError('Passwords do not match');
       isValid = false;
     }
-  
+
     // If all validations pass, proceed with form submission
     if (isValid) {
-      // Handle form submission logic here
       router.push('/dashboard/super-admin');
     }
   };
-  
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-b from-pivotaNavy to-pivotaTeal">
@@ -90,8 +88,25 @@ const SignUp = () => {
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-xl">
           <h2 className="text-3xl font-bold text-center text-teal-600 mb-6">Create an Account</h2>
 
+          {/* User Name */}
+          <div className="mb-4 flex items-center">
+            <label htmlFor="userName" className="w-1/3 text-sm text-gray-700 font-medium cursor-pointer">
+              User Name
+            </label>
+            <input
+              type="text"
+              id="userName"
+              name="userName"
+              placeholder="e.g. johndoe123"
+              className="w-2/3 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              value={formData.userName}
+              onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
+              required
+            />
+          </div>
+
           {/* Horizontal Form Fields */}
-          {[ 
+          {[
             { label: 'First Name', id: 'firstName', type: 'text', value: formData.firstName, placeholder: 'e.g John' },
             { label: 'Last Name', id: 'lastName', type: 'text', value: formData.lastName, placeholder: 'e.g Doe' },
             { label: 'Email', id: 'email', type: 'email', value: formData.email, placeholder: 'e.g johndoe@gmail.com' },
@@ -114,7 +129,7 @@ const SignUp = () => {
             </div>
           ))}
 
-          {/* Phone with Kenya flag */}
+          {/* Phone */}
           <div className="mb-4 flex items-center">
             <label htmlFor="phone" className="w-1/3 text-sm text-gray-700 font-medium cursor-pointer">
               Phone
@@ -125,14 +140,14 @@ const SignUp = () => {
                 alt="Kenya Flag"
                 width={24}
                 height={24}
-                className="absolute left-3 top-1/2 transform -translate-y-1/4"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2"
               />
               <input
                 type="tel"
                 id="phone"
                 name="phone"
                 placeholder="e.g. +254712345678 or 0712345678"
-                className="w-full pl-12 pr-4 py-3 mt-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 required
@@ -142,9 +157,15 @@ const SignUp = () => {
           {phoneError && <p className="text-red-500 text-xs mt-2">{phoneError}</p>}
 
           {/* Password */}
-          {[ 
+          {[
             { label: 'Password', id: 'password', show: showPassword, setShow: setShowPassword, value: formData.password },
-            { label: 'Confirm Password', id: 'confirmPassword', show: showConfirmPassword, setShow: setShowConfirmPassword, value: formData.confirmPassword },
+            {
+              label: 'Confirm Password',
+              id: 'confirmPassword',
+              show: showConfirmPassword,
+              setShow: setShowConfirmPassword,
+              value: formData.confirmPassword,
+            },
           ].map(({ label, id, show, setShow, value }) => (
             <div className="mb-4 flex items-center relative" key={id}>
               <label htmlFor={id} className="w-1/3 text-sm text-gray-700 font-medium cursor-pointer">
@@ -168,9 +189,7 @@ const SignUp = () => {
                 >
                   {show ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
                 </button>
-                
               </div>
-              {/* Display respective error messages below each field */}
               {id === 'password' && passwordError && <p className="text-red-500 text-xs mt-2">{passwordError}</p>}
               {id === 'confirmPassword' && confirmPasswordError && <p className="text-red-500 text-xs mt-2">{confirmPasswordError}</p>}
             </div>
@@ -190,14 +209,7 @@ const SignUp = () => {
             className="flex items-center justify-center w-full p-3 border border-gray-300 rounded-lg shadow-md mb-2 mt-2 hover:bg-gray-100 transition-colors"
           >
             Sign Up with Google
-            <Image
-              src="/google.png"
-              alt="Google Icon"
-              width={70}
-              height={40}
-              className="ml-2"
-            />
-            
+            <Image src="/google.png" alt="Google Icon" width={70} height={40} className="ml-2" />
           </button>
 
           {/* Already have an account link */}
