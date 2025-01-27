@@ -17,7 +17,7 @@ model User {
   username String @unique
   firstName String
   lastName String
-  phone String? @unique //optional and unique
+  phone String @unique //optional and unique
   password String @unique
   createdAt DateTime @default(now())
   updateAt DateTime @updatedAt

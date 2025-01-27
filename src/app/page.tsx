@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { z } from "zod"; // Import Zod
+import { ToastContainer, toast } from 'react-toastify';
 
 // Define the error type
 type FormErrors = {
@@ -37,7 +38,7 @@ const SignUp = () => {
     firstName: z.string().min(1, { message: "First name is required" }),
     lastName: z.string().min(1, { message: "Last name is required" }),
     email: z.string().email({ message: "Invalid email address" }),
-    phone: z.string().regex(/^(?:\+2547|07)\d{8}$/, {
+    phone: z.string().regex(/^(?:\+2547|07|01)\d{8}$/, {
       message: "Please enter a valid Kenyan phone number",
     }),
     password: z
@@ -49,6 +50,13 @@ const SignUp = () => {
       }),
     confirmPassword: z.string().min(1, { message: "Confirm password is required" }),
   });
+
+  // Effect to show API error toast
+  useEffect(() => {
+    if (errors.apiError) {
+      toast.error(errors.apiError, { position: "top-right" });
+    }
+  }, [errors.apiError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -242,8 +250,9 @@ const SignUp = () => {
                 {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
               </button>
             </div>
-            {errors.password && <p className="text-red-500 text-xs mt-2">{errors.password}</p>}
+          
           </div>
+          <div>  {errors.password && <p className="text-red-500 text-xs mt-2">{errors.password}</p>} </div>
 
           {/* Confirm Password */}
           <div className="mb-4 flex items-center">
@@ -280,10 +289,10 @@ const SignUp = () => {
           >
             {loading ? "Signing Up..." : "Create Account"}
           </button>
-
-          {/* API Error Message */}
-          {errors.apiError && <p className="text-red-500 text-xs mt-2">{errors.apiError}</p>}
-
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-500 mt-1 cursor-pointer">
+            Sign Up with Google 
+            <Image className="" src="/googleicon.png" width={20} height={20} alt="google icon"/>
+          </div>
           <div className="mt-4 text-center text-sm">
             <p className="text-gray-600">
               Already have an account?{" "}
@@ -292,6 +301,7 @@ const SignUp = () => {
           </div>
         </form>
       </div>
+      <ToastContainer/>
     </div>
   );
 };

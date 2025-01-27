@@ -73,6 +73,24 @@ export async function POST(req: Request) {
       );
     }
 
+    //Check if phone number already exists
+    const existingPhoneNumber = await db.user.findUnique({
+      where: {phone},
+    });
+    if(existingPhoneNumber){
+      return NextResponse.json(
+        {
+          user: null, 
+          message: "User with this phone already exists",
+        },
+        {
+          status: 409
+        },
+      )
+    }
+
+    
+
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 12);
 
