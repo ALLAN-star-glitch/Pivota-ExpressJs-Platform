@@ -1,24 +1,19 @@
-"use client"
 
-import DateTime from "@/components/common/DateTime";
+
+import ClientSuccessToast from "@/components/toast/ClientSuccessToast";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
-const AdminPage = () => {
+const AdminPage = async () => {
 
-  const searchParams = useSearchParams();
 
-  useEffect(() => {
-    if (searchParams.get("success") === "true") {
-      toast.success("Login Successful", {
-        position: "top-right",
 
-      });
-    }
-  }, [searchParams]);
+ const session = await getServerSession(authOptions);
+
+  
 
   return (
     <div className="mt-8 p-4 flex gap-4 flex-col md:flex-row h-[calc(100vh-64px)]">
@@ -26,10 +21,10 @@ const AdminPage = () => {
       <div className="w-full lg:w-2/3 flex flex-col gap-8 overflow-y-auto max-h-screen no-scrollbar">
         {/* WELCOME MESSAGE */}
         <div className="bg-gradient-to-r from-pivotaTeal to-pivotaAqua text-pivotaWhite shadow-md rounded-lg p-6">
-          <h2 className="text-2xl font-semibold">Welcome Back, Eng. Allan! 👋</h2>
+          <h2 className="text-2xl font-semibold capitalize">Welcome Back, {session?.user.firstName}! 👋</h2>
           <p className="text-sm text-pivotaLightGray">Here&apos;s your dashboard overview for today..</p>
         </div>
-        <DateTime /> {/* ✅ This now updates in real-time */}
+       
 
         {/* QUICK LINKS */}
         <div className="bg-pivotaWhite shadow-md rounded-lg p-6 mt-4">
@@ -71,7 +66,11 @@ const AdminPage = () => {
         <h1 className="text-pivotaTeal">Right</h1>
         {/* Additional content can go here */}
       </div>
-      <ToastContainer/>
+
+      <ToastContainer />
+
+      {/* Handle success toast on the client side */}
+      <ClientSuccessToast />
     </div>
   );
 };

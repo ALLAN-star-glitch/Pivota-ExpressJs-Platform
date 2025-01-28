@@ -1,7 +1,8 @@
-import { db } from "@/lib/db";
+
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import bcrypt from "bcrypt"; // Import bcrypt for password hashing
+import bcrypt from "bcryptjs"; // Import bcrypt for password hashing
+import { db } from "@/lib/db";
 
 // Define the Zod schema for user input validation
 const userSchema = z.object({
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           user: null,
-          message: "User with this email already exists",
+          message: "User already exists", // Simplified error message
         },
         { status: 409 }
       );
@@ -67,29 +68,25 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           user: null,
-          message: "User with this username already exists",
+          message: "User already exists", // Simplified error message
         },
         { status: 409 }
       );
     }
 
-    //Check if phone number already exists
+    // Check if phone number already exists
     const existingPhoneNumber = await db.user.findUnique({
-      where: {phone},
+      where: { phone },
     });
-    if(existingPhoneNumber){
+    if (existingPhoneNumber) {
       return NextResponse.json(
         {
-          user: null, 
-          message: "User with this phone already exists",
+          user: null,
+          message: "User already exists", // Simplified error message
         },
-        {
-          status: 409
-        },
-      )
+        { status: 409 }
+      );
     }
-
-    
 
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -105,6 +102,8 @@ export async function POST(req: Request) {
         phone,
       },
     });
+
+    
 
     return NextResponse.json(
       { user: newUser, message: "User created successfully" },

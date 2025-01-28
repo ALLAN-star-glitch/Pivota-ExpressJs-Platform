@@ -1,13 +1,18 @@
-// src/lib/auth.ts
-import NextAuth, { NextAuthOptions } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { compare } from "bcryptjs";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { db } from "./db";
-import { compare } from "bcrypt";
 
 // This is your authentication configuration
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(db),
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: 'jwt',
+  },
   pages: {
-    signIn: "/login",  // Custom sign-in page
+    signIn: "/login", // Custom sign-in page
   },
   providers: [
     CredentialsProvider({
@@ -17,34 +22,59 @@ export const authOptions: NextAuthOptions = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
-        
-
         if (!credentials?.email || !credentials?.password) {
-
-          return null;
-        } 
-        
-        const existingUser = await db.user.findUnique({
-            where: {email: credentials?.email}
-        });
-
-        if(!existingUser){
-            return null
+          throw new Error("Email and password are required.");
         }
 
-        const passwordMatch = await compare(credentials.password, existingUser.password)
+        const existingUser = await db.user.findUnique({
+          where: { email: credentials.email },
+        });
 
-        if(!passwordMatch){
-            return null
+        if (!existingUser) {
+          throw new Error("No user found with this email.");
+        }
+
+        const passwordMatch = await compare(
+          credentials.password,
+          existingUser.password
+        );
+
+        if (!passwordMatch) {
+          throw new Error("Invalid password.");
         }
 
         return {
-            id: `${existingUser.id}`, 
-            username: existingUser.username, 
-            email: existingUser.email
-        }
-
+          id: `${existingUser.id}`,
+          username: existingUser.username,
+          email: existingUser.email,
+          firstName: existingUser.firstName, // Assuming you have a firstName field
+        };
       },
     }),
   ],
+
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        // Include firstName and other user data in the token
+        return {
+          ...token,
+          username: user.username,
+          firstName: user.firstName, // Save firstName in JWT token
+        };
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          username: token.username,
+          firstName: token.firstName, // Include firstName in session
+        },
+      };
+    },
+  },
 };

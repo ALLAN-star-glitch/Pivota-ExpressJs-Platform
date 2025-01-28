@@ -1,6 +1,12 @@
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
 import Image from "next/image";
 
-const NavBarDashboard = () => {
+const NavBarDashboard = async () => {
+
+  const session = await getServerSession(authOptions)
+
+
   return (
     <div className="flex justify-between items-center py-4 pr-3 h-20 px-4 bg-pivotaWhite shadow-md">
       {/* SEARCH BAR */}
@@ -30,8 +36,8 @@ const NavBarDashboard = () => {
 
         {/* User Info */}
         <div className="flex flex-col">
-          <span className="text-xs leading-3 font-medium text-pivotaTeal">Eng Allan</span>
-          <span className="text-[10px] text-pivotaTeal text-right">Admin</span>
+          <span className="text-sm leading-3 font-medium text-pivotaTeal capitalize">{session?.user.firstName}</span>
+          <span className="text-[12px] text-pivotaTeal text-right">Admin</span>
         </div>
 
         {/* Avatar */}
