@@ -1,4 +1,4 @@
-import { db } from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcrypt"; // Import bcrypt for password hashing

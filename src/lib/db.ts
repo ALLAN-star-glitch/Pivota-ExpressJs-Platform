@@ -1,4 +1,4 @@
-// This is to avoid
+// This is to avoid multiple instances of prisma
 
 import { PrismaClient } from "@prisma/client";
 

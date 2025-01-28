@@ -1,8 +1,25 @@
+"use client"
+
 import DateTime from "@/components/common/DateTime";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 const AdminPage = () => {
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      toast.success("Login Successful", {
+        position: "top-right",
+
+      });
+    }
+  }, [searchParams]);
+
   return (
     <div className="mt-8 p-4 flex gap-4 flex-col md:flex-row h-[calc(100vh-64px)]">
       {/* LEFT */}
@@ -54,6 +71,7 @@ const AdminPage = () => {
         <h1 className="text-pivotaTeal">Right</h1>
         {/* Additional content can go here */}
       </div>
+      <ToastContainer/>
     </div>
   );
 };
