@@ -203,6 +203,15 @@ const SignIn = () => {
               </Link>
             </p>
           </div>
+
+          {/* Go to Homepage Button */}
+          <div className="mt-6 flex justify-center">
+            <Link href="/" passHref>
+              <button className="text-teal-500 font-semibold hover:underline">
+                Go to Homepage
+              </button>
+            </Link>
+          </div>
         </form>
       </div>
       <ToastContainer />

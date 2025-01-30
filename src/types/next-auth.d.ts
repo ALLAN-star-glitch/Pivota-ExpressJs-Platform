@@ -16,5 +16,8 @@ declare module "next-auth" {
       username: string;
       firstName: string; // Add firstName field here too
     };
+    token: {
+      username: string
+    }
   }
 }

@@ -1,3 +1,6 @@
+"use client";
+
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -121,7 +124,7 @@ const menuItems = [
       {
         icon: "/logout.png",
         label: "Logout",
-        href: "/logout",
+        action: () => signOut({ callbackUrl: "/login" }), // Redirects to login after logout
         visible: ["super_admin", "admin", "service_provider", "job_seeker", "landlord"],
       },
     ],
@@ -133,26 +136,30 @@ const Menu = () => {
     <div className="mt-4 text-sm">
       {menuItems.map((item) => (
         <div className="flex flex-col gap-2" key={item.title}>
-          <span className="hidden lg:block font-light text-gray-500 my-4">
-            {item.title}
-          </span>
-          {item.items.map((i) => (
-            <Link
-              href={i.href}
-              key={i.label}
-              className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-pivotaTeal hover:text-pivotaWhite transition-colors"
-            >
-              {/* Icon with white color */}
-              <Image
-                src={i.icon}
-                alt={i.label}
-                width={25}
-                height={25}
-                className="text-white transition-colors duration-200 hover:filter hover:brightness-110"
-              />
-              <span className="hidden lg:block">{i.label}</span>
-            </Link>
-          ))}
+          <span className="hidden lg:block font-light text-gray-500 my-4">{item.title}</span>
+          {item.items.map((i) =>
+            i.action ? (
+              // Logout Button (Calls signOut)
+              <button
+                key={i.label}
+                onClick={i.action}
+                className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+              >
+                <Image src={i.icon} alt={i.label} width={25} height={25} />
+                <span className="hidden lg:block">{i.label}</span>
+              </button>
+            ) : (
+              // Normal Menu Item
+              <Link
+                href={i.href}
+                key={i.label}
+                className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-pivotaTeal transition-colors"
+              >
+                <Image src={i.icon} alt={i.label} width={25} height={25} />
+                <span className="hidden lg:block">{i.label}</span>
+              </Link>
+            )
+          )}
         </div>
       ))}
     </div>

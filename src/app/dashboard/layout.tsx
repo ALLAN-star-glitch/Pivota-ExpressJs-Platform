@@ -1,13 +1,25 @@
+import AccessDenied from "@/components/common/AccessDenied";
 import Menu from "@/components/common/Menu";
 import NavBarDashboard from "@/components/common/NavBarDashboard";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const session = await getServerSession(authOptions)
+
+  if (!session) {
+    return(
+   <AccessDenied/>
+    )
+  }
+  
   return (
     <div className="min-h-screen flex">
       {/* LEFT */}
