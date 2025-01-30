@@ -8,7 +8,7 @@ const HomePage: React.FC = () => {
       <NavbarWebsite />
       <main className="relative">
         {/* Hero Section with Image Overlay */}
-        <section className="relative text-pivotaWhite text-center py-32 px-6">
+        <section className="relative text-pivotaWhite text-center py-60 px-6">
           <div className="absolute inset-0 bg-black opacity-30 z-0"></div> {/* Overlay */}
           <Image
             src="/signup-image.webp" // Path should be relative to the public directory
@@ -32,15 +32,15 @@ const HomePage: React.FC = () => {
         <section className="py-20 px-6 bg-pivotaLightGray">
           <h2 className="text-3xl font-semibold text-center mb-12">How It Works</h2>
           <div className="max-w-screen-lg mx-auto grid md:grid-cols-3 gap-12">
-            <div className="bg-pivotaWhite p-6 rounded-lg shadow-md hover:shadow-xl transition">
+            <div className="bg-pivotaWhite p-6 rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
               <h3 className="text-xl font-semibold mb-4">1. Browse Services</h3>
               <p>Search for service providers, browse profiles, and find the help you need.</p>
             </div>
-            <div className="bg-pivotaWhite p-6 rounded-lg shadow-md hover:shadow-xl transition">
+            <div className="bg-pivotaWhite p-6 rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
               <h3 className="text-xl font-semibold mb-4">2. Apply for Jobs</h3>
               <p>Browse job listings, apply to opportunities, and find your next role.</p>
             </div>
-            <div className="bg-pivotaWhite p-6 rounded-lg shadow-md hover:shadow-xl transition">
+            <div className="bg-pivotaWhite p-6 rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
               <h3 className="text-xl font-semibold mb-4">3. Find Rentals</h3>
               <p>Explore rental properties and find the perfect place to call home.</p>
             </div>
@@ -51,15 +51,15 @@ const HomePage: React.FC = () => {
         <section className="py-20 px-6 bg-pivotaWhite">
           <h2 className="text-3xl font-semibold text-center mb-12">Featured Services</h2>
           <div className="max-w-screen-lg mx-auto grid md:grid-cols-3 gap-12">
-            <div className="bg-pivotaTeal text-pivotaWhite p-6 rounded-lg shadow-md hover:shadow-xl transition">
+            <div className="bg-pivotaTeal text-pivotaWhite p-6 rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
               <h3 className="text-xl font-semibold mb-4">Plumbing</h3>
               <p>Connect with licensed plumbers in your area for quick and reliable services.</p>
             </div>
-            <div className="bg-pivotaTeal text-pivotaWhite p-6 rounded-lg shadow-md hover:shadow-xl transition">
+            <div className="bg-pivotaTeal text-pivotaWhite p-6 rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
               <h3 className="text-xl font-semibold mb-4">Electrical</h3>
               <p>Find certified electricians for any repair, installation, or maintenance needs.</p>
             </div>
-            <div className="bg-pivotaTeal text-pivotaWhite p-6 rounded-lg shadow-md hover:shadow-xl transition">
+            <div className="bg-pivotaTeal text-pivotaWhite p-6 rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
               <h3 className="text-xl font-semibold mb-4">Counseling</h3>
               <p>Book a session with experienced counselors to support your mental well-being.</p>
             </div>

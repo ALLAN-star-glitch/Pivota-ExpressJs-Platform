@@ -43,7 +43,7 @@ const NavbarWebsite: React.FC = () => {
         {status === "authenticated" ? (
           <Link href="/dashboard/super-admin">
             <div className="flex items-center space-x-2 cursor-pointer">
-              <FaUserCircle size={40} />
+              <FaUserCircle size={40}/>
               <span className="font-medium">
                 <ClientSession />
               </span>
