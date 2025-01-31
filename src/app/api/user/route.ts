@@ -12,7 +12,7 @@ const userSchema = z.object({
   password: z.string().min(8, { message: "Password must be at least 8 characters" }),
   confirmPassword: z.string().min(8, { message: "Confirm password is required" }), // Ensure confirm password is at least 8 chars
   phone: z.string().min(10, { message: "Phone number must be at least 10 digits" }),
-  role: z.enum(['superAdmin', 'user', 'employer', 'serviceProvider', 'landLord']).default('user') // Default role is "user"
+  role: z.enum(['superAdmin', 'user', 'employer', 'serviceProvider', 'landlord']).default('user') // Default role is "user"
 });
 
 export async function POST(req: Request) {

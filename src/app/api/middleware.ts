@@ -7,7 +7,7 @@ const roleBasedRoutes: { [key: string]: string[] } = {
   "/dashboard/super-admin": ["superAdmin"],
   "/dashboard/service-provider": ["serviceProvider"],
   "/dashboard/employer": ["employer"],
-  "/dashboard/landlord": ["landLord"],
+  "/dashboard/landlord": ["landlord"],
   "/dashboard/user": ["user"],
 };
 

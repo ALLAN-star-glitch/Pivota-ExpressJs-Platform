@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 
-const Landlord = async () => {
+const User = async () => {
 
 
 
@@ -73,4 +73,4 @@ const Landlord = async () => {
   );
 };
 
-export default Landlord;
+export default User;

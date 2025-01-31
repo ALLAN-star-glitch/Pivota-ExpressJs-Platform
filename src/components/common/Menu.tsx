@@ -1,11 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { signOut } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 
-const menuItems = [
+interface MenuItem {
+  icon: string;
+  label: string;
+  href?: string;
+  action?: string;
+  visible?: string[]; // Array of roles that should see this item
+}
+
+interface MenuSection {
+  title: string;
+  items: MenuItem[];
+}
+
+const menuItems: MenuSection[] = [
   {
     title: "MAIN",
     items: [
@@ -13,8 +26,9 @@ const menuItems = [
         icon: "/dashboard.svg",
         label: "Dashboard",
         href: "/admin",
-        visible: ["super_admin", "admin", "service_provider", "job_seeker", "landlord"],
+        visible: ["superAdmin", "landlord", "employer", "user", "serviceProvider"],
       },
+      
     ],
   },
   {
@@ -24,24 +38,7 @@ const menuItems = [
         icon: "/user.svg",
         label: "Users",
         href: "/admin/users",
-        visible: ["super_admin", "admin"],
-      },
-    ],
-  },
-  {
-    title: "SERVICES",
-    items: [
-      {
-        icon: "/services.svg",
-        label: "Service Listings",
-        href: "/admin/services",
-        visible: ["super_admin", "admin", "service_provider"],
-      },
-      {
-        icon: "/bookings.svg",
-        label: "Bookings",
-        href: "/admin/bookings",
-        visible: ["super_admin", "admin", "service_provider"],
+        visible: ["superAdmin"],
       },
     ],
   },
@@ -49,19 +46,24 @@ const menuItems = [
     title: "JOBS",
     items: [
       {
-        icon: "/joblistings.svg",
+        icon: "/joblistings.svg", // An icon representing job listings
         label: "Job Listings",
-        href: "/admin/jobs",
-        visible: ["super_admin", "admin", "job_seeker"],
+        href: "/admin/job-listings", // The route for Employer to manage job listings
+        visible: ["employer", "superAdmin", "user"], // Make sure it's visible only for Employers
       },
-      {
-        icon: "/jobapplications.svg",
-        label: "Applications",
-        href: "/admin/applications",
-        visible: ["super_admin", "admin", "job_seeker"],
-      },
-    ],
+    ]
   },
+  {
+  title: "SERVICES",
+  items: [
+    {
+      icon: "/services.svg", // You can use an icon related to services
+      label: "Service Listings", // The label for Service Listings
+      href: "/admin/services", // This should link to the page where Service Providers manage their listings
+      visible: ["serviceProvider", "superAdmin", "user"], 
+    },
+  ]
+},
   {
     title: "RENTALS",
     items: [
@@ -69,13 +71,13 @@ const menuItems = [
         icon: "/properties.svg",
         label: "Property Listings",
         href: "/admin/properties",
-        visible: ["super_admin", "admin", "landlord"],
+        visible: ["superAdmin", "landlord", "user"],
       },
       {
         icon: "/properties-enquiries.svg",
         label: "Tenant Inquiries",
         href: "/admin/inquiries",
-        visible: ["super_admin", "admin", "landlord"],
+        visible: ["superAdmin", "landlord"],
       },
     ],
   },
@@ -86,24 +88,7 @@ const menuItems = [
         icon: "/messages.svg",
         label: "Messages",
         href: "/messages",
-        visible: ["super_admin", "admin", "service_provider", "job_seeker", "landlord"],
-      },
-      {
-        icon: "/announcements.svg",
-        label: "Announcements",
-        href: "/announcements",
-        visible: ["super_admin", "admin"],
-      },
-    ],
-  },
-  {
-    title: "ANALYTICS",
-    items: [
-      {
-        icon: "/reports.svg",
-        label: "Reports",
-        href: "/admin/reports",
-        visible: ["super_admin", "analytics_admin"],
+        visible: ["superAdmin", "landlord", "employer", "user", "serviceProvider"],
       },
     ],
   },
@@ -114,19 +99,19 @@ const menuItems = [
         icon: "/platformsettings.png",
         label: "Platform Settings",
         href: "/admin/settings",
-        visible: ["super_admin"],
+        visible: ["superAdmin"],
       },
       {
         icon: "/profilesettings.svg",
         label: "Profile Settings",
         href: "/profile",
-        visible: ["super_admin", "admin", "service_provider", "job_seeker", "landlord"],
+        visible: ["superAdmin", "landlord", "employer", "user", "serviceProvider"],
       },
       {
         icon: "/logout.svg",
         label: "Logout",
         action: "logout",
-        visible: ["super_admin", "admin", "service_provider", "job_seeker", "landlord"],
+        visible: ["superAdmin", "landlord", "employer", "user", "serviceProvider"],
       },
     ],
   },
@@ -134,36 +119,62 @@ const menuItems = [
 
 const Menu = () => {
   const [showModal, setShowModal] = useState(false);
+  const { data: session, status } = useSession(); // Fetch session data
+
+  const userRole = session?.user?.role || null; // Ensure userRole is defined
+
+  useEffect(() => {
+    // Removed console logs
+  }, [session, userRole]);
+
+  if (status === "loading") {
+    return <div>Loading...</div>; // Show loading state until session is available
+  }
+
+  // If there's no userRole, don't render anything
+  if (!userRole) {
+    return <div>No user role found. Please log in.</div>;
+  }
+
+  // Filter out menu items based on user role
+  const visibleMenuItems = menuItems.map((section) => ({
+    ...section,
+    items: section.items.filter((item) =>
+      item.visible?.includes(userRole)
+    ),
+  }));
 
   return (
     <div className="mt-4 text-sm">
-      {menuItems.map((item) => (
-        <div className="flex flex-col gap-2" key={item.title}>
-          <span className="hidden lg:block font-light text-gray-300 my-4">{item.title}</span>
-          {item.items.map((i) =>
-            i.action === "logout" ? (
-              <button
-                key={i.label}
-                onClick={() => setShowModal(true)}
-                className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-              >
-                <Image src={i.icon} alt={i.label} width={25} height={25} />
-                <span className="hidden lg:block">{i.label}</span>
-              </button>
-            ) : i.href? (
-              <Link
-                href={i.href}
-                key={i.label}
-                className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-pivotaTeal transition-colors"
-              >
-                <Image src={i.icon} alt={i.label} width={35} height={35} className="fill-white" />
-                <span className="hidden lg:block">{i.label}</span>
-              </Link>
-            ):null
-          )}
-        </div>
+  
+      {visibleMenuItems.map((section) => (
+        section.items.length > 0 && (
+          <div className="flex flex-col gap-2" key={section.title}>
+            <span className="hidden lg:block font-light text-gray-300 my-4">{section.title}</span>
+            {section.items.map((item) =>
+              item.action === "logout" ? (
+                <button
+                  key={item.label}
+                  onClick={() => setShowModal(true)}
+                  className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  <Image src={item.icon} alt={item.label} width={25} height={25} />
+                  <span className="hidden lg:block">{item.label}</span>
+                </button>
+              ) : item.href ? (
+                <Link
+                  href={item.href}
+                  key={item.label}
+                  className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-pivotaTeal transition-colors"
+                >
+                  <Image src={item.icon} alt={item.label} width={35} height={35} className="fill-white" />
+                  <span className="hidden lg:block">{item.label}</span>
+                </Link>
+              ) : null
+            )}
+          </div>
+        )
       ))}
-
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
           <div className="bg-white rounded-2xl shadow-lg p-6 max-w-sm text-center">

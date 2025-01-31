@@ -23,7 +23,7 @@ const SignUp = () => {
     password: "",
     confirmPassword: "",
     phone: "",
-    role: "user" as "user" | "superAdmin" | "employer" | "serviceProvider" | "landLord", // Explicitly type the role field
+    role: "user" as "user" | "superAdmin" | "employer" | "serviceProvider" | "landlord", // Explicitly type the role field
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +49,7 @@ const SignUp = () => {
           "Password must include 1 uppercase letter, 1 number, and 1 special character",
       }),
     confirmPassword: z.string().min(1, { message: "Confirm password is required" }),
-    role: z.enum(["superAdmin", "user", "employer", "serviceProvider", "landLord"]).default("user"),
+    role: z.enum(["superAdmin", "user", "employer", "serviceProvider", "landlord"]).default("user"),
   });
 
   // Effect to show API error toast
@@ -274,13 +274,13 @@ const SignUp = () => {
               name="role"
               className="w-2/3 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
               value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value as "user" | "superAdmin" | "employer" | "serviceProvider" | "landLord" })}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value as "user" | "superAdmin" | "employer" | "serviceProvider" | "landlord" })}
               required
             >
               <option value="user">Normal User</option>
               <option value="serviceProvider">Service Provider</option>
               <option value="employer">Employer</option>
-              <option value="landLord">Landlord</option>
+              <option value="landlord">Landlord</option>
             </select>
             {errors.role && <p className="text-red-500 text-xs mt-2">{errors.role}</p>}
           </div>
@@ -292,6 +292,12 @@ const SignUp = () => {
           >
             Create Account
           </button>
+          {/* Redirect to Login Button */}
+          <div className="mt-4 text-center">
+            <Link href="/login">
+              <div className="text-teal-600 hover:text-teal-800 text-sm">Already have an account? Log in</div>
+            </Link>
+          </div>
         </form>
       </div>
       <ToastContainer />

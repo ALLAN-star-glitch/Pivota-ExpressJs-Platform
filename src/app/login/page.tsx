@@ -110,7 +110,6 @@ const SignIn = () => {
         jobSeeker: "/dashboard/job-seeker",
         landlord: "/dashboard/landlord",
         employer: "/dashboard/employer",
-        marketer: "/dashboard/marketing",
         user: "/dashboard/user"
       };
   

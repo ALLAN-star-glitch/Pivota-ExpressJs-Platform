@@ -6,7 +6,7 @@ import { NextAuthOptions } from "next-auth";
 
 
 // Define roles that can access the app
-const allowedRoles = ["superAdmin", "admin", "employer", "serviceProvider", "landLord"];
+const allowedRoles = ["superAdmin", "user", "employer", "serviceProvider", "landlord"];
 
 
 export const authOptions: NextAuthOptions = {
