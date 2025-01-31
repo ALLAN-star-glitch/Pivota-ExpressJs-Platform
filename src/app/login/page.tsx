@@ -77,22 +77,46 @@ const SignIn = () => {
 
   const onSubmit = async (values: FormData) => {
     try {
-      // Send credentials to the NextAuth API endpoint
+      // Sign in with credentials
       const result = await signIn("credentials", {
         redirect: false,
         email: values.email,
         password: values.password,
       });
-
+  
       if (result?.error) {
         setErrors((prevErrors) => ({
           ...prevErrors,
           apiError: result.error || "Login failed, please try again.",
         }));
-      } else {
-        // Redirect to dashboard if login is successful
-        router.push("/dashboard/super-admin?success=true");
+        return;
       }
+  
+      // Fetch session data to get the user role
+      const response = await fetch("/api/auth/session");
+      const session = await response.json();
+  
+      if (!session?.user?.role) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          apiError: "Unable to determine user role.",
+        }));
+        return;
+      }
+  
+      // Define dashboard routes by role
+      const roleRoutes: { [key: string]: string } = {
+        serviceProvider: "/dashboard/service-provider",
+        jobSeeker: "/dashboard/job-seeker",
+        landlord: "/dashboard/landlord",
+        employer: "/dashboard/employer",
+        marketer: "/dashboard/marketing",
+        user: "/dashboard/user"
+      };
+  
+      // Redirect to respective dashboard
+      const dashboardRoute = roleRoutes[session.user.role] || "/dashboard";
+      router.push(`${dashboardRoute}?username=${session.user.username}&success=true`);
     } catch (error) {
       console.error("API error:", error);
       setErrors((prevErrors) => ({
@@ -101,6 +125,7 @@ const SignIn = () => {
       }));
     }
   };
+  
 
   // Handle "Go to Homepage" button click
   const handleGoToHomepage = () => {

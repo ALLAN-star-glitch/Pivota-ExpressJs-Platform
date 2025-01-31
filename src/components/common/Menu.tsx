@@ -10,7 +10,7 @@ const menuItems = [
     title: "MAIN",
     items: [
       {
-        icon: "/home.png",
+        icon: "/dashboard.svg",
         label: "Dashboard",
         href: "/admin",
         visible: ["super_admin", "admin", "service_provider", "job_seeker", "landlord"],
@@ -21,7 +21,7 @@ const menuItems = [
     title: "USER MANAGEMENT",
     items: [
       {
-        icon: "/profile.png",
+        icon: "/user.svg",
         label: "Users",
         href: "/admin/users",
         visible: ["super_admin", "admin"],
@@ -32,13 +32,13 @@ const menuItems = [
     title: "SERVICES",
     items: [
       {
-        icon: "/parent.png",
+        icon: "/services.svg",
         label: "Service Listings",
         href: "/admin/services",
         visible: ["super_admin", "admin", "service_provider"],
       },
       {
-        icon: "/student.png",
+        icon: "/bookings.svg",
         label: "Bookings",
         href: "/admin/bookings",
         visible: ["super_admin", "admin", "service_provider"],
@@ -49,13 +49,13 @@ const menuItems = [
     title: "JOBS",
     items: [
       {
-        icon: "/subject.png",
+        icon: "/joblistings.svg",
         label: "Job Listings",
         href: "/admin/jobs",
         visible: ["super_admin", "admin", "job_seeker"],
       },
       {
-        icon: "/singleLesson.png",
+        icon: "/jobapplications.svg",
         label: "Applications",
         href: "/admin/applications",
         visible: ["super_admin", "admin", "job_seeker"],
@@ -66,13 +66,13 @@ const menuItems = [
     title: "RENTALS",
     items: [
       {
-        icon: "/teacher.png",
+        icon: "/properties.svg",
         label: "Property Listings",
         href: "/admin/properties",
         visible: ["super_admin", "admin", "landlord"],
       },
       {
-        icon: "/filter.png",
+        icon: "/properties-enquiries.svg",
         label: "Tenant Inquiries",
         href: "/admin/inquiries",
         visible: ["super_admin", "admin", "landlord"],
@@ -83,13 +83,13 @@ const menuItems = [
     title: "COMMUNICATION",
     items: [
       {
-        icon: "/message.png",
+        icon: "/messages.svg",
         label: "Messages",
         href: "/messages",
         visible: ["super_admin", "admin", "service_provider", "job_seeker", "landlord"],
       },
       {
-        icon: "/announcement.png",
+        icon: "/announcements.svg",
         label: "Announcements",
         href: "/announcements",
         visible: ["super_admin", "admin"],
@@ -100,7 +100,7 @@ const menuItems = [
     title: "ANALYTICS",
     items: [
       {
-        icon: "/analytics.png",
+        icon: "/reports.svg",
         label: "Reports",
         href: "/admin/reports",
         visible: ["super_admin", "analytics_admin"],
@@ -111,19 +111,19 @@ const menuItems = [
     title: "SETTINGS",
     items: [
       {
-        icon: "/setting.png",
+        icon: "/platformsettings.png",
         label: "Platform Settings",
         href: "/admin/settings",
         visible: ["super_admin"],
       },
       {
-        icon: "/profile.png",
+        icon: "/profilesettings.svg",
         label: "Profile Settings",
         href: "/profile",
         visible: ["super_admin", "admin", "service_provider", "job_seeker", "landlord"],
       },
       {
-        icon: "/logout.png",
+        icon: "/logout.svg",
         label: "Logout",
         action: "logout",
         visible: ["super_admin", "admin", "service_provider", "job_seeker", "landlord"],
@@ -139,7 +139,7 @@ const Menu = () => {
     <div className="mt-4 text-sm">
       {menuItems.map((item) => (
         <div className="flex flex-col gap-2" key={item.title}>
-          <span className="hidden lg:block font-light text-gray-500 my-4">{item.title}</span>
+          <span className="hidden lg:block font-light text-gray-300 my-4">{item.title}</span>
           {item.items.map((i) =>
             i.action === "logout" ? (
               <button
@@ -156,7 +156,7 @@ const Menu = () => {
                 key={i.label}
                 className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-pivotaTeal transition-colors"
               >
-                <Image src={i.icon} alt={i.label} width={25} height={25} />
+                <Image src={i.icon} alt={i.label} width={35} height={35} className="fill-white" />
                 <span className="hidden lg:block">{i.label}</span>
               </Link>
             ):null

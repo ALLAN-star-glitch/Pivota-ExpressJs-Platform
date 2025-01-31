@@ -37,7 +37,7 @@ const NavBarDashboard = async () => {
         {/* User Info */}
         <div className="flex flex-col">
           <span className="text-sm leading-3 font-medium text-pivotaTeal capitalize">{session?.user.firstName}</span>
-          <span className="text-[12px] text-pivotaTeal text-right">Admin</span>
+          <span className="text-[12px] text-pivotaTeal text-right">{session?.user.role}</span>
         </div>
 
         {/* Avatar */}

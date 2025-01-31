@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs"; // Import bcrypt for password hashing
@@ -13,6 +12,7 @@ const userSchema = z.object({
   password: z.string().min(8, { message: "Password must be at least 8 characters" }),
   confirmPassword: z.string().min(8, { message: "Confirm password is required" }), // Ensure confirm password is at least 8 chars
   phone: z.string().min(10, { message: "Phone number must be at least 10 digits" }),
+  role: z.enum(['superAdmin', 'user', 'employer', 'serviceProvider', 'landLord']).default('user') // Default role is "user"
 });
 
 export async function POST(req: Request) {
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { firstName, lastName, email, username, password, confirmPassword, phone } = parsedData.data;
+    const { firstName, lastName, email, username, password, confirmPassword, phone, role } = parsedData.data;
 
     // Check if password and confirmPassword match
     if (password !== confirmPassword) {
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           user: null,
-          message: "User already exists", // Simplified error message
+          message: "User with this email already exists.",
         },
         { status: 409 }
       );
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           user: null,
-          message: "User already exists", // Simplified error message
+          message: "User with this username already exists.",
         },
         { status: 409 }
       );
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           user: null,
-          message: "User already exists", // Simplified error message
+          message: "User with this phone number already exists.",
         },
         { status: 409 }
       );
@@ -91,7 +91,7 @@ export async function POST(req: Request) {
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create the user
+    // Create the user with the assigned role
     const newUser = await db.user.create({
       data: {
         firstName,
@@ -100,10 +100,9 @@ export async function POST(req: Request) {
         username,
         password: hashedPassword, // Store the hashed password
         phone,
+        role, // Save the user role
       },
     });
-
-    
 
     return NextResponse.json(
       { user: newUser, message: "User created successfully" },

@@ -15,7 +15,7 @@ const ClientSession = () => {
 
   if (status === "loading") return <div>Loading...</div>;
 
-  return <>{firstName || "Login"}</>;
+  return <>{firstName || "Welcome"}</>;
 };
 
 export default ClientSession;

@@ -1,6 +1,6 @@
 const ServiceProvider = () => {
     return (
-        <div className="text-bold text-8xl">ServiceProvider Page</div>
+        <div className="text-bold text-8xl">ServiceProvider Dashboard</div>
     )
 }
 

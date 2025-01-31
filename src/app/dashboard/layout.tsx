@@ -36,7 +36,7 @@ export default async function DashboardLayout({
         </div>
 
         {/* Scrollable Menu */}
-        <div className="overflow-y-auto flex-1 p-4 text-pivotaWhite no-scrollbar">
+        <div className="overflow-y-auto flex-1 p-4 text-pivotaWhite">
           <Menu />
         </div>
       </div>
@@ -49,7 +49,7 @@ export default async function DashboardLayout({
         </div>
 
         {/* Scrollable Content */}
-        <div className="overflow-y-auto flex-1 no-scrollbar text-pivotaTeal">
+        <div className="overflow-y-auto flex-1 text-pivotaTeal">
           {children}
         </div>
       </div>

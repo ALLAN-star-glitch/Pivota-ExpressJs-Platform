@@ -9,6 +9,7 @@ declare module "next-auth" {
   interface User {
     username: string;
     firstName: string; // Add firstName field
+    role: string;
   }
 
   // Extend the Session interface to include both the user data
@@ -16,6 +17,7 @@ declare module "next-auth" {
     user: User & {
       username: string;
       firstName: string; // Add firstName field here too
+      role: string;
     };
     token: {
       username: string
