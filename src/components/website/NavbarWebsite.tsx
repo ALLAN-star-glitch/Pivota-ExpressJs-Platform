@@ -9,7 +9,7 @@ import LoginPromptModal from "../common/LoginPromptModal";  // Import the modal
 const NavbarWebsite: React.FC = () => {
   const [mounted, setMounted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);  // Track modal state
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
   // Ensure the component is mounted on the client side
   useEffect(() => {

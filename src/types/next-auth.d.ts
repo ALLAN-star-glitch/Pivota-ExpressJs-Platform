@@ -2,6 +2,7 @@
 
 import NextAuth from "next-auth";
 
+
 // Extend the NextAuth types
 declare module "next-auth" {
   // Add the username and firstName fields to the User interface
