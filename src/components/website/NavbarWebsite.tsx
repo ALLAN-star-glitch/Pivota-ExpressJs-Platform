@@ -41,21 +41,40 @@ const NavbarWebsite: React.FC = () => {
 
         {/* Conditionally render based on session state */}
         {status === "authenticated" ? (
-          <Link href="/dashboard/super-admin">
-            <div className="flex items-center space-x-2 cursor-pointer">
-              <FaUserCircle size={40}/>
-              <span className="font-medium">
-                <ClientSession />
-              </span>
-            </div>
-          </Link>
+          <div className="flex items-center space-x-4 cursor-pointer">
+            
+            {/* Post an Ad button - route to dashboard for authenticated users */}
+            <Link href="/dashboard/super-admin">
+              <button className="bg-pivotaTeal text-white px-4 py-2 rounded-md hover:bg-pivotaAqua">
+                Post an Ad
+              </button>
+            </Link>
+
+            <Link href="/dashboard/super-admin">
+              <div className="flex items-center space-x-2 cursor-pointer">
+                <FaUserCircle size={40} />
+                <span className="font-medium"><ClientSession/></span>
+              </div>
+            </Link>
+          </div>
         ) : (
-          <button
-            className="bg-pivotaTeal text-white px-4 py-2 rounded-md hover:bg-pivotaAqua"
-            onClick={openModal}  // Open modal on button click
-          >
-            Post an Ad
-          </button>
+          <div className="flex items-center space-x-4">
+            {/* Post an Ad button for logged-out users - opens modal */}
+            <button
+              className="bg-pivotaTeal text-white px-4 py-2 rounded-md hover:bg-pivotaAqua"
+              onClick={openModal}  // Open modal on button click
+            >
+              Post an Ad
+            </button>
+
+            {/* Avatar with Login text for logged-out users */}
+            <Link href="/login">
+              <div className="flex items-center space-x-2 cursor-pointer">
+                <FaUserCircle size={40} />
+                <span className="font-medium">Login</span>
+              </div>
+            </Link>
+          </div>
         )}
       </div>
 
