@@ -9,6 +9,7 @@ const HomePage: React.FC = () => {
       <main className="relative">
         {/* Hero Section with Image Overlay */}
         <section className="relative text-pivotaWhite text-center py-60 px-6">
+          
           <div className="absolute inset-0 bg-black opacity-30 z-0"></div> {/* Overlay */}
           <Image
             src="/signup-image.webp" // Path should be relative to the public directory

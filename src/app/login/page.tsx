@@ -8,6 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import LoadingBar from "@/components/common/LoadingBar";
 
 // Define the validation schema with Zod
 const userSchema = z.object({
@@ -101,12 +102,16 @@ const SignIn = () => {
     }
   };
 
+  // Handle "Go to Homepage" button click
+  const handleGoToHomepage = () => {
+    setLoading(true); // Show loading bar
+    router.push("/"); // Navigate to homepage
+  };
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-b from-pivotaNavy to-pivotaTeal">
       {/* Loading Bar */}
-      {loading && (
-        <div className="fixed top-0 left-0 w-full h-2 bg-gradient-to-r from-pivotaTeal via-pivotaAqua to-pivotaCoral animate-pulse z-50"></div>
-      )}
+      {loading && <LoadingBar/>}
 
       {/* LEFT - Image */}
       <div className="w-full md:w-1/2 h-1/2 md:h-screen bg-cover bg-center relative">
@@ -207,7 +212,9 @@ const SignIn = () => {
           {/* Go to Homepage Button */}
           <div className="mt-6 flex justify-center">
             <Link href="/" passHref>
-              <button className="text-teal-500 font-semibold hover:underline">
+              <button
+               className="text-teal-500 font-semibold hover:underline"
+               onClick={handleGoToHomepage}>
                 Go to Homepage
               </button>
             </Link>

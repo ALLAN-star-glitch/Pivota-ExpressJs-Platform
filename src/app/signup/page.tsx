@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { z } from "zod"; // Import Zod
 import { ToastContainer, toast } from 'react-toastify';
+import LoadingBar from "@/components/common/LoadingBar";
 
 // Define the error type
 type FormErrors = {
@@ -137,9 +138,7 @@ const SignUp = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-b from-pivotaNavy to-pivotaTeal">
       {/* Loading Bar */}
-      {loading && (
-        <div className="fixed top-0 left-0 w-full h-2 bg-gradient-to-r from-pivotaTeal via-pivotaAqua to-pivotaCoral animate-pulse z-50"></div>
-      )}
+      {loading && <LoadingBar/>}
 
       {/* LEFT - Image */}
       <div className="w-full md:w-1/2 h-1/2 md:h-screen bg-cover bg-center relative">
