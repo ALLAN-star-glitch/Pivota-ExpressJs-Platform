@@ -1,11 +1,10 @@
 
-
-import ClientSuccessToast from "@/components/toast/ClientSuccessToast";
+import ClientWrapperToast from "@/components/toast/ClientWrapperToast";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
-import { ToastContainer } from "react-toastify";
+
 
 const AdminPage = async () => {
 
@@ -69,10 +68,7 @@ const AdminPage = async () => {
         {/* Additional content can go here */}
       </div>
 
-      <ToastContainer />
-
-      {/* Handle success toast on the client side */}
-      <ClientSuccessToast />
+      <ClientWrapperToast/>
     </div>
   );
 };
