@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect, useRef } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useSession, signOut } from "next-auth/react";
@@ -54,9 +52,11 @@ const NavbarWebsite: React.FC = () => {
     "employer",
     "serviceProvider",
   ];
-  const validUserRole = validRoles.includes(userRole as any)
+
+  // Ensure the role is valid, otherwise fallback to "serviceProvider"
+  const validUserRole = validRoles.includes(userRole as "landlord" | "employer" | "serviceProvider")
     ? (userRole as "landlord" | "employer" | "serviceProvider")
-    : "serviceProvider"; // Default to "serviceProvider"
+    : "serviceProvider"; // Default to "serviceProvider" if not valid
 
   // Handle dashboard redirection
   const handleRedirect = () => {
