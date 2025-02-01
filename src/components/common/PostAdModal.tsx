@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
+
 // Define a type for the form data
 interface AdFormData {
   title: string;
@@ -11,7 +12,9 @@ interface AdFormData {
   serviceType?: string;
 }
 
-const PostAdModal = ({
+
+
+const PostAdModal =  ({
   isOpen,
   onClose,
   isAuthenticated,
@@ -23,6 +26,7 @@ const PostAdModal = ({
   const [step, setStep] = useState<"select" | "form">("select");
   const [adType, setAdType] = useState<"house" | "job" | "service" | null>(null);
   const router = useRouter();
+
 
   // Handle the selection of post type
   const handleSelectPostType = (type: "house" | "job" | "service") => {
@@ -59,8 +63,11 @@ const PostAdModal = ({
 
         {step === "select" ? (
           <div className="space-y-6">
-            <h2 className="text-3xl font-semibold text-white text-center">
-              What would you like to post?
+
+             {/* White horizontal line before the title */}
+                 <hr className="border-t border-white my-4" />
+            <h2 className="md: text-3xl sm: text-[12px] font-semibold text-white text-center">
+              Hi, What would you like to post?
             </h2>
             <button
               className="w-full bg-pivotaTeal text-white px-6 py-4 rounded-lg shadow-lg transform hover:scale-105 transition duration-300"

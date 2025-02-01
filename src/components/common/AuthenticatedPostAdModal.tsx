@@ -1,4 +1,7 @@
+import { useSession } from "next-auth/react";
 import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 interface AdFormData {
   title: string;
@@ -19,6 +22,7 @@ const AuthenticatedPostAdModal = ({
   userRole: "landlord" | "employer" | "serviceProvider"; // User role to determine the form
 }) => {
   const [adType, setAdType] = useState<"house" | "job" | "service" | null>(null);
+  const {data: session} = useSession()
 
   // Handle form submission
   const handleFormSubmit = (data: AdFormData) => {
@@ -41,13 +45,16 @@ const AuthenticatedPostAdModal = ({
         </div>
 
         <div className="space-y-6">
-          <h2 className="text-3xl font-semibold text-white text-center">
-            {userRole === "landlord"
-              ? "Post Your House (Landlord)"
-              : userRole === "employer"
-              ? "Post Your Job (Employer)"
-              : "Post Your Service (Service Provider)"}
-          </h2>
+
+          {/* White horizontal line before the title */}
+        <hr className="border-t border-white my-4" />
+        <h2 className="text-3xl font-semibold text-white text-center">
+          {userRole === "landlord"
+            ? `Hi, ${session?.user?.firstName || ""}, Post Your Vacant House`
+            : userRole === "employer"
+            ? `Hi, ${session?.user?.firstName || ""}, Post Your Vacant Job`
+            : `Hi, ${session?.user?.firstName || ""}, Post Your Service`}
+        </h2>
 
           {/* Form for the specific role */}
           <div className="space-y-6">
