@@ -1,5 +1,5 @@
 
-import ClientWrapperToast from "@/components/toast/ClientWrapperToast";
+
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
@@ -11,8 +11,6 @@ const Employer = async () => {
 
 
  const session = await getServerSession(authOptions);
-
-
 
   
 
@@ -67,8 +65,6 @@ const Employer = async () => {
         <h1 className="text-pivotaTeal">Right</h1>
         {/* Additional content can go here */}
       </div>
-
-      <ClientWrapperToast/>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import AccessDenied from "@/components/common/AccessDenied";
 import Menu from "@/components/common/Menu";
-import NavBarDashboard from "@/components/common/NavBarDashboard";
+import NavBarDashboard from "@/components/dashboard/NavBarDashboard";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
@@ -45,7 +45,7 @@ export default async function DashboardLayout({
       <div className="w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] bg-pivotaLightGray flex flex-col h-screen">
         {/* Sticky NavBar */}
         <div className="sticky top-0 z-10 bg-pivotaWhite shadow">
-          <NavBarDashboard />
+          <NavBarDashboard/>
         </div>
 
         {/* Scrollable Content */}

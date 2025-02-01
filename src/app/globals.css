@@ -30,3 +30,25 @@ body {
   scrollbar-width: none;  /* Firefox */
 }
 
+@keyframes enhancedPulse {
+  0% {
+    transform: scale(1) rotate(0deg); /* Initial state */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    background-color: #008080; /* Initial color */
+  }
+  50% {
+    transform: scale(1.1) rotate(15deg); /* Slight scale up and rotation */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* Bigger shadow for emphasis */
+    background-color: #FFD700; /* Change color to gold at the peak */
+  }
+  100% {
+    transform: scale(1) rotate(0deg); /* Return to original state */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Reset shadow */
+    background-color: #008080; /* Return to original color */
+  }
+}
+
+.pulsate {
+  animation: enhancedPulse 5s ease-in-out infinite; /* Slightly slower animation */
+}
+

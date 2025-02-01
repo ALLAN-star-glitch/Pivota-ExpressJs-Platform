@@ -1,5 +1,4 @@
 
-import ClientWrapperToast from "@/components/toast/ClientWrapperToast";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
@@ -68,7 +67,7 @@ const Landlord = async () => {
         {/* Additional content can go here */}
       </div>
 
-      <ClientWrapperToast/>
+    
     </div>
   );
 };

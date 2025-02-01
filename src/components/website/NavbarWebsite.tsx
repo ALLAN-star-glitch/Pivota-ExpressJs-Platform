@@ -1,5 +1,3 @@
-// components/NavbarWebsite.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -7,11 +5,12 @@ import { FaUserCircle } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ClientSession from "../common/ClientSession";
-import PostAdModal from "../common/PostAdModal";  // Import the modal
+import PostAdModal from "../common/PostAdModal";  // Import the unauthenticated modal
+import AuthenticatedPostAdModal from "../common/AuthenticatedPostAdModal"; // Import the authenticated modal
 
 const NavbarWebsite: React.FC = () => {
   const [mounted, setMounted] = useState(false);
-  const [isAdModalOpen, setIsAdModalOpen] = useState(false); // Track PostAdModal state
+  const [isAdModalOpen, setIsAdModalOpen] = useState(false); // Track modal state
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -23,7 +22,16 @@ const NavbarWebsite: React.FC = () => {
     return null;
   }
 
-  const userRole = session?.user?.role || "";
+  // Handle case where session is still loading
+  if (status === "loading") {
+    return <div>Loading...</div>; // or show a loading spinner
+  }
+
+  // Get the user role and ensure it's a valid one
+  const userRole = session?.user?.role ?? ""; // Default to empty string if undefined
+  const validRoles: ("landlord" | "employer" | "serviceProvider")[] = ["landlord", "employer", "serviceProvider"];
+  const validUserRole = validRoles.includes(userRole as "landlord" | "employer" | "serviceProvider") ? (userRole as "landlord" | "employer" | "serviceProvider") : "serviceProvider"; // Fallback to "serviceProvider" if role is invalid
+
   const username = session?.user?.username || "";
 
   const getDashboardRoute = (role: string, username: string) => {
@@ -40,13 +48,13 @@ const NavbarWebsite: React.FC = () => {
 
   const handleRedirect = () => {
     if (status === "authenticated") {
-      const dashboardRoute = getDashboardRoute(userRole, username);
+      const dashboardRoute = getDashboardRoute(validUserRole, username);
       router.push(dashboardRoute);
     }
   };
 
   const openAdModal = () => {
-    setIsAdModalOpen(true);  // Open the modal for both authenticated and unauthenticated users
+    setIsAdModalOpen(true); // Open the modal for both authenticated and unauthenticated users
   };
 
   return (
@@ -91,11 +99,22 @@ const NavbarWebsite: React.FC = () => {
         )}
       </div>
 
-      <PostAdModal
-        isOpen={isAdModalOpen}
-        onClose={() => setIsAdModalOpen(false)}
-        isAuthenticated={status === "authenticated"} // Pass authentication status to the modal
-         />
+      {/* Conditional rendering based on session status */}
+      {status === "authenticated" ? (
+        <AuthenticatedPostAdModal
+          isOpen={isAdModalOpen}
+          onClose={() => setIsAdModalOpen(false)}
+          userRole={validUserRole} // Pass validated role to the modal
+        />
+      ) : (
+        status === "unauthenticated" && (
+          <PostAdModal
+            isOpen={isAdModalOpen}
+            onClose={() => setIsAdModalOpen(false)}
+            isAuthenticated={false} // Explicitly pass `false` for unauthenticated users
+          />
+        )
+      )}
     </nav>
   );
 };

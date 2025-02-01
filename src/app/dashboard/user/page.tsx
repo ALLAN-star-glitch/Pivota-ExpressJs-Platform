@@ -68,7 +68,7 @@ const User = async () => {
         {/* Additional content can go here */}
       </div>
 
-      <ClientWrapperToast/>
+    
     </div>
   );
 };
