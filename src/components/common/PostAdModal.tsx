@@ -66,7 +66,7 @@ const PostAdModal =  ({
 
              {/* White horizontal line before the title */}
                  <hr className="border-t border-white my-4" />
-            <h2 className="md: text-3xl sm: text-[12px] font-semibold text-white text-center">
+            <h2 className="md: text-3xl font-semibold text-white text-center">
               Hi, What would you like to post?
             </h2>
             <button
