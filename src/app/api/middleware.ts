@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next"; // App Router uses next-auth/next
+import { getServerSession } from "next-auth/next"; // For App Router
 import { authOptions } from "@/lib/auth";
 
-// Define role-based access control for routes
 const roleBasedRoutes: { [key: string]: string[] } = {
   "/dashboard/super-admin": ["superAdmin"],
   "/dashboard/service-provider": ["serviceProvider"],
@@ -12,41 +11,31 @@ const roleBasedRoutes: { [key: string]: string[] } = {
 };
 
 export async function middleware(req: Request) {
-  // Use getServerSession for App Router (note the usage of `next-auth/next` here)
-  const session = await getServerSession(authOptions);
-  console.log(session); // Log session to verify it's correct
+  const session = await getServerSession(authOptions); // Get session data
 
   if (!session) {
-    // If no session exists, redirect to login page
+    // If no session, redirect to login
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  const { user } = session; // Extract user from session
-  console.log(user); // Check if user and user.role are correctly populated
-  const requestedRoute = new URL(req.url).pathname; // Get the requested route
+  const { user } = session;
+  const requestedRoute = new URL(req.url).pathname;
 
-  // Role-based access control logic
+  // Check role-based access
   for (const route in roleBasedRoutes) {
     if (requestedRoute.startsWith(route)) {
-      const allowedRoles = roleBasedRoutes[route as keyof typeof roleBasedRoutes];
+      const allowedRoles = roleBasedRoutes[route];
+
       if (!allowedRoles.includes(user.role)) {
-        // If the user doesn't have access, return a 403 forbidden response
-        return NextResponse.json(
-          { message: "You do not have permission to access this route." },
-          { status: 403 }
-        );
+        // If user role is not allowed, redirect to their own dashboard
+        return NextResponse.redirect(new URL(`/dashboard/${user.role}`, req.url));
       }
     }
   }
 
-  // Allow the request to proceed if authorized
-  return NextResponse.next();
+  return NextResponse.next(); // Allow request to continue if authorized
 }
 
-// Define the matcher to specify which routes the middleware applies to
 export const config = {
-  matcher: [
-    "/dashboard/*", // Match all routes starting with /dashboard/
-    "/api/*", // Protect API routes as well
-  ],
+  matcher: ["/dashboard/:path*"], // Apply middleware to all dashboard pages
 };

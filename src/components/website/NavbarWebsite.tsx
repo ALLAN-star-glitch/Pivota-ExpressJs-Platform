@@ -1,14 +1,17 @@
+// components/NavbarWebsite.tsx
+
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import LoginPromptModal from "../common/LoginPromptModal";
 import ClientSession from "../common/ClientSession";
+import PostAdModal from "../common/PostAdModal";  // Import the modal
 
 const NavbarWebsite: React.FC = () => {
   const [mounted, setMounted] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAdModalOpen, setIsAdModalOpen] = useState(false); // Track PostAdModal state
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -20,11 +23,9 @@ const NavbarWebsite: React.FC = () => {
     return null;
   }
 
-  // Get user role
   const userRole = session?.user?.role || "";
   const username = session?.user?.username || "";
 
-  // Function to determine dashboard route based on role and append username
   const getDashboardRoute = (role: string, username: string) => {
     const roleRoutes: Record<string, string> = {
       serviceProvider: "/dashboard/service-provider",
@@ -33,19 +34,19 @@ const NavbarWebsite: React.FC = () => {
       employer: "/dashboard/employer",
     };
 
-    // Return the respective dashboard route and append username to the URL
     const dashboardRoute = roleRoutes[role] || "/dashboard";
     return `${dashboardRoute}?username=${username}&success=true`;
   };
 
-  // Function to handle navigation
   const handleRedirect = () => {
     if (status === "authenticated") {
       const dashboardRoute = getDashboardRoute(userRole, username);
       router.push(dashboardRoute);
-    } else {
-      setIsModalOpen(true); // Show login modal for unauthenticated users
     }
+  };
+
+  const openAdModal = () => {
+    setIsAdModalOpen(true);  // Open the modal for both authenticated and unauthenticated users
   };
 
   return (
@@ -61,15 +62,13 @@ const NavbarWebsite: React.FC = () => {
 
         {status === "authenticated" ? (
           <div className="flex items-center space-x-4 cursor-pointer">
-            {/* Post an Ad button */}
             <button
               className="bg-pivotaTeal text-white px-4 py-2 rounded-md hover:bg-pivotaAqua"
-              onClick={handleRedirect} // Redirects based on role
+              onClick={openAdModal} // Open modal for authenticated users
             >
               Post an Ad
             </button>
 
-            {/* Avatar */}
             <div className="flex items-center space-x-2 cursor-pointer" onClick={handleRedirect}>
               <FaUserCircle size={40} />
               <span className="font-medium"><ClientSession /></span>
@@ -77,15 +76,13 @@ const NavbarWebsite: React.FC = () => {
           </div>
         ) : (
           <div className="flex items-center space-x-4">
-            {/* Post an Ad button for logged-out users */}
             <button
               className="bg-pivotaTeal text-white px-4 py-2 rounded-md hover:bg-pivotaAqua"
-              onClick={handleRedirect} // Opens modal for unauthenticated users
+              onClick={openAdModal}  // Open modal for unauthenticated users
             >
               Post an Ad
             </button>
 
-            {/* Login Button */}
             <button onClick={() => router.push("/login")} className="flex items-center space-x-2 cursor-pointer">
               <FaUserCircle size={40} />
               <span className="font-medium">Login</span>
@@ -94,8 +91,11 @@ const NavbarWebsite: React.FC = () => {
         )}
       </div>
 
-      {/* Login Prompt Modal */}
-      <LoginPromptModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <PostAdModal
+        isOpen={isAdModalOpen}
+        onClose={() => setIsAdModalOpen(false)}
+        isAuthenticated={status === "authenticated"} // Pass authentication status to the modal
+         />
     </nav>
   );
 };
