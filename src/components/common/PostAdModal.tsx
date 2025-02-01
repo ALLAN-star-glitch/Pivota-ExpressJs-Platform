@@ -1,7 +1,15 @@
-"use client";
-
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+
+// Define a type for the form data
+interface AdFormData {
+  title: string;
+  description: string;
+  location?: string;
+  price: number;
+  jobCategory?: string;
+  serviceType?: string;
+}
 
 const PostAdModal = ({
   isOpen,
@@ -23,7 +31,7 @@ const PostAdModal = ({
   };
 
   // Handle form submission
-  const handleFormSubmit = (data: any) => {
+  const handleFormSubmit = (data: AdFormData) => {
     if (!isAuthenticated) {
       router.push("/login"); // Redirect to login if not authenticated
       return;
@@ -36,18 +44,15 @@ const PostAdModal = ({
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
       <div
-        className="relative bg-gradient-to-b from-pivotaTeal via-black to-pivotaNavy  max-w-3xl w-full mx-4 p-8 rounded-lg shadow-lg bg-cover bg-center"
-                onClick={(e) => e.stopPropagation()}>
-
-
+        className={`relative bg-gradient-to-b from-pivotaTeal via-black to-pivotaNavy max-w-3xl w-full mx-4 p-8 rounded-lg shadow-lg bg-cover bg-center transform transition-transform duration-500 ease-in-out ${
+          isOpen ? "scale-100" : "scale-95"
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="absolute top-4 right-4">
-          <button
-            className="text-white text-2xl focus:outline-none"
-            onClick={onClose}
-          >
+          <button className="text-white text-2xl focus:outline-none" onClick={onClose}>
             &times;
           </button>
         </div>
@@ -104,9 +109,7 @@ const PostAdModal = ({
 
             <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-white">
-                  Title
-                </label>
+                <label className="block text-sm font-medium text-white">Title</label>
                 <input
                   type="text"
                   className="w-full p-4 border border-pivotaTeal rounded-md bg-transparent text-white placeholder-gray-400 focus:ring-pivotaAqua focus:border-pivotaAqua"
@@ -116,9 +119,7 @@ const PostAdModal = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white">
-                  Description
-                </label>
+                <label className="block text-sm font-medium text-white">Description</label>
                 <textarea
                   className="w-full p-4 border border-pivotaTeal rounded-md bg-transparent text-white placeholder-gray-400 focus:ring-pivotaAqua focus:border-pivotaAqua"
                   placeholder="Describe your listing"
@@ -129,9 +130,7 @@ const PostAdModal = ({
               {adType === "house" && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-white">
-                      Location
-                    </label>
+                    <label className="block text-sm font-medium text-white">Location</label>
                     <input
                       type="text"
                       className="w-full p-4 border border-pivotaTeal rounded-md bg-transparent text-white placeholder-gray-400 focus:ring-pivotaAqua focus:border-pivotaAqua"
@@ -141,9 +140,7 @@ const PostAdModal = ({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-white">
-                      Price
-                    </label>
+                    <label className="block text-sm font-medium text-white">Price</label>
                     <input
                       type="number"
                       className="w-full p-4 border border-pivotaTeal rounded-md bg-transparent text-white placeholder-gray-400 focus:ring-pivotaAqua focus:border-pivotaAqua"
@@ -157,9 +154,7 @@ const PostAdModal = ({
               {adType === "job" && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-white">
-                      Job Category
-                    </label>
+                    <label className="block text-sm font-medium text-white">Job Category</label>
                     <input
                       type="text"
                       className="w-full p-4 border border-pivotaTeal rounded-md bg-transparent text-white placeholder-gray-400 focus:ring-pivotaAqua focus:border-pivotaAqua"
@@ -169,9 +164,7 @@ const PostAdModal = ({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-white">
-                      Salary
-                    </label>
+                    <label className="block text-sm font-medium text-white">Salary</label>
                     <input
                       type="number"
                       className="w-full p-4 border border-pivotaTeal rounded-md bg-transparent text-white placeholder-gray-400 focus:ring-pivotaAqua focus:border-pivotaAqua"
@@ -185,9 +178,7 @@ const PostAdModal = ({
               {adType === "service" && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-white">
-                      Service Type
-                    </label>
+                    <label className="block text-sm font-medium text-white">Service Type</label>
                     <input
                       type="text"
                       className="w-full p-4 border border-pivotaTeal rounded-md bg-transparent text-white placeholder-gray-400 focus:ring-pivotaAqua focus:border-pivotaAqua"
@@ -197,9 +188,7 @@ const PostAdModal = ({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-white">
-                      Price
-                    </label>
+                    <label className="block text-sm font-medium text-white">Price</label>
                     <input
                       type="number"
                       className="w-full p-4 border border-pivotaTeal rounded-md bg-transparent text-white placeholder-gray-400 focus:ring-pivotaAqua focus:border-pivotaAqua"
@@ -220,7 +209,7 @@ const PostAdModal = ({
                 </button>
                 <button
                   type="submit"
-                  onClick={() => handleFormSubmit({})}
+                  onClick={() => handleFormSubmit({ title: "", description: "", price: 0 })}
                   className="bg-pivotaTeal text-white px-6 py-2 rounded-lg shadow-lg transform hover:scale-105 transition duration-300"
                 >
                   Submit
