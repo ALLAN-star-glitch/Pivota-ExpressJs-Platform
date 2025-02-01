@@ -56,7 +56,7 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
         {session && (
           <button
             onClick={() => {}}
-            className="bg-pivotaTeal text-white px-4 py-2 rounded-md hover:bg-pivotaAqua text-sm  md:flex"
+            className="bg-pivotaTeal text-white px-4 py-2 rounded-md hover:bg-pivotaAqua text-sm hidden md:flex"
           >
             Switch Role
           </button>
@@ -78,7 +78,7 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
         {/* User Info */}
         <div className="flex flex-col">
           <span className="text-sm leading-3 font-medium text-pivotaTeal capitalize">{session?.user.firstName}</span>
-          <span className="text-[12px] text-pivotaTeal text-right">{session?.user.role} Account</span>
+          <span className="text-[12px] text-pivotaTeal text-right">{session?.user.role}</span>
         </div>
 
         {/* Avatar */}
