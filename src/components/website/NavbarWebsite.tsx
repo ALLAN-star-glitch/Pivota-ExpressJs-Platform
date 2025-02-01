@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect, useRef } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useSession, signOut } from "next-auth/react";
@@ -5,8 +6,7 @@ import { useRouter } from "next/navigation";
 import ClientSession from "../common/ClientSession";
 import PostAdModal from "../common/PostAdModal"; // Modal for unauthenticated users
 import AuthenticatedPostAdModal from "../common/AuthenticatedPostAdModal"; // Modal for authenticated users
-import Image from "next/image";
-import Link from "next/link";
+
 
 const NavbarWebsite: React.FC = () => {
   const [mounted, setMounted] = useState(false);
