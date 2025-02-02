@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react";
 import { FaPlusCircle } from "react-icons/fa"; // Icon for "Post an Ad"
+import { FaMoon, FaSun } from "react-icons/fa"; // React Icons for theme switcher
 import PostAdModal from "../common/PostAdModal"; // Unauthenticated modal
 import AuthenticatedPostAdModal from "../common/AuthenticatedPostAdModal"; // Authenticated modal
 import { Session } from "next-auth";
@@ -12,6 +13,7 @@ interface NavBarDashboardClientProps {
 
 const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }) => {
   const [isAdModalOpen, setIsAdModalOpen] = useState(false); // Modal state
+  const [isDarkTheme, setIsDarkTheme] = useState(false); // Track theme
 
   const userRole = session?.user?.role ?? "";
   const validRoles: ("landlord" | "employer" | "serviceProvider")[] = ["landlord", "employer", "serviceProvider"];
@@ -52,25 +54,32 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
           </button>
         )}
 
-        {/* Switch Role Button */}
+        {/* Switch Role Button For Large Screens */}
         {session && (
-          <button
-            onClick={() => {}}
-            className="bg-pivotaTeal text-white px-4 py-2 rounded-md hover:bg-pivotaAqua text-sm hidden md:flex"
-          >
-            Switch Role
-          </button>
+           <div className="hidden md:flex items-center gap-2 cursor-pointer ">
+             <span className="hidden md:block">Switch Role</span>
+          <Image src="/role-switch.svg" height={18} width={18} alt="role switch" />
+        </div>
         )}
 
-        {/* Swith Role Button for small devices */}
-
+        {/* Switch Role Button for small devices */}
         <div className="block md:hidden">
           <Image src="/role-switch.svg" height={18} width={18} alt="role switch" />
         </div>
 
-
-        
-
+      
+        {/* Theme Switcher Icon */}
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => setIsDarkTheme(!isDarkTheme)} // Toggle theme on click
+        >
+          <span className="hidden md:block">Switch Theme</span>
+          {isDarkTheme ? (
+            <FaSun size={20} className="text-pivotaTeal" />
+          ) : (
+            <FaMoon size={20} className="text-pivotaTeal" />
+          )}
+        </div>
         {/* Message Icon */}
         <div className="bg-pivotaWhite rounded-full w-7 h-7 flex items-center justify-center cursor-pointer hover:bg-pivotaTeal hover:bg-opacity-10">
           <Image src="/message.png" alt="message" width={20} height={20} />
