@@ -35,7 +35,7 @@ const AuthenticatedPostAdModal = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
       <div
-        className="relative bg-gradient-to-b from-pivotaTeal via-black to-pivotaNavy max-w-3xl w-full mx-4 p-8 rounded-lg shadow-lg bg-cover bg-center transform transition-transform duration-500 ease-in-out"
+        className="relative bg-gradient-to-b from-pivotaTeal via-black to-pivotaNavy max-w-3xl w-full mx-4 p-6 rounded-lg shadow-lg bg-cover bg-center transform transition-transform duration-500 ease-in-out max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute top-4 right-4">

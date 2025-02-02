@@ -154,8 +154,8 @@ const SignUp = () => {
       </div>
 
       {/* RIGHT - Form */}
-      <div className="w-full md:w-1/2 h-screen overflow-y-auto flex justify-center items-center p-8 pt-24 pb-24">
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-xl">
+      <div className="w-full md:w-1/2 flex h-screen justify-center items-center p-8 pt-24 pb-24">
+        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-xl max-h-[90vh] overflow-y-auto">
           <h2 className="text-3xl font-bold text-center text-teal-600 mb-6">Create an Account</h2>
 
           {/* User Name */}

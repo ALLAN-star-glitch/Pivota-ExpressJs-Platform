@@ -62,6 +62,15 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
           </button>
         )}
 
+        {/* Swith Role Button for small devices */}
+
+        <div className="block md:hidden">
+          <Image src="/role-switch.svg" height={18} width={18} alt="role switch" />
+        </div>
+
+
+        
+
         {/* Message Icon */}
         <div className="bg-pivotaWhite rounded-full w-7 h-7 flex items-center justify-center cursor-pointer hover:bg-pivotaTeal hover:bg-opacity-10">
           <Image src="/message.png" alt="message" width={20} height={20} />
@@ -76,7 +85,7 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
         </div>
 
         {/* User Info */}
-        <div className="flex flex-col">
+        <div className="hidden md:flex flex-col ">
           <span className="text-sm leading-3 font-medium text-pivotaTeal capitalize">{session?.user.firstName}</span>
           <span className="text-[12px] text-pivotaTeal text-right">{session?.user.role}</span>
         </div>

@@ -117,7 +117,7 @@ const NavbarWebsite: React.FC = () => {
             <div className="relative" ref={dropdownRef}>
               <div className="flex items-center space-x-2 cursor-pointer" onClick={toggleDropdown}>
                 <FaUserCircle size={40} />
-                <span className="font-medium">{session?.user?.name || <ClientSession />}</span>
+                <span className="font-medium sm: hidden md:flex">{session?.user?.name || <ClientSession />}</span>
               </div>
 
               {/* Dropdown Menu */}
