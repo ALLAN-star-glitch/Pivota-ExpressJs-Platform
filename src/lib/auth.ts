@@ -1,19 +1,17 @@
-import CredentialsProvider from "next-auth/providers/credentials";
-import { compare } from "bcryptjs";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { db } from "./db";
 import { NextAuthOptions } from "next-auth";
-
+import CredentialsProvider from "next-auth/providers/credentials";
+import { compare } from "bcryptjs";
 
 // Define roles that can access the app
 const allowedRoles = ["superAdmin", "user", "employer", "serviceProvider", "landlord"];
-
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   secret: process.env.NEXTAUTH_SECRET,
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   pages: {
     signIn: "/login", // Custom sign-in page
@@ -33,6 +31,7 @@ export const authOptions: NextAuthOptions = {
         // Check if user exists in the database
         const existingUser = await db.user.findUnique({
           where: { email: credentials.email },
+          include: { roles: true }, // Include the roles in the query
         });
 
         if (!existingUser) {
@@ -45,18 +44,21 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid password.");
         }
 
-        // Check if the user's role is allowed to log in
-        if (!allowedRoles.includes(existingUser.role)) {
+        // Check if the user's roles include any of the allowed roles
+        const userRoles = existingUser.roles; // `roles` is now an array
+        const isAuthorized = userRoles.some(role => allowedRoles.includes(role.name));
+
+        if (!isAuthorized) {
           throw new Error("You do not have permission to access this application.");
         }
 
-        // Return the user object with role
+        // Include the `plan` field when returning the user data
         return {
           id: `${existingUser.id}`,
-          username: existingUser.username,
           email: existingUser.email,
           firstName: existingUser.firstName,
-          role: existingUser.role, // Include role from the database
+          plan: existingUser.plan,  // Include the plan here
+          roles: userRoles.map(role => role.name), // Return the roles as an array of role names
         };
       },
     }),
@@ -65,26 +67,26 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        // Include user data and role in the JWT token
+        // Include user data and roles in the JWT token
         return {
           ...token,
-          username: user.username,
           firstName: user.firstName,
-          role: user.role, // Save role in JWT token
+          plan: user.plan, // Include plan in the token
+          roles: user.roles, // Save roles as an array in JWT token
         };
       }
       return token;
     },
 
     async session({ session, token }) {
-      // Include role in session
+      // Include roles and plan in session
       return {
         ...session,
         user: {
           ...session.user,
-          username: token.username,
           firstName: token.firstName,
-          role: token.role, // Include role in session
+          plan: token.plan,  // Include plan in session
+          roles: token.roles, // Include roles in session
         },
       };
     },

@@ -15,7 +15,7 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
   const [isAdModalOpen, setIsAdModalOpen] = useState(false); // Modal state
   const [isDarkTheme, setIsDarkTheme] = useState(false); // Track theme
 
-  const userRole = session?.user?.role ?? "";
+  const userRole = session?.user?.roles ?? "";
   const validRoles: ("landlord" | "employer" | "serviceProvider")[] = ["landlord", "employer", "serviceProvider"];
   const validUserRole = validRoles.includes(userRole as "landlord" | "employer" | "serviceProvider")
     ? (userRole as "landlord" | "employer" | "serviceProvider")

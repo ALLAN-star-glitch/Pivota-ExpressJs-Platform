@@ -101,6 +101,9 @@ const NavbarWebsite: React.FC = () => {
           <button onClick={() => router.push("/about")} className="hover:text-pivotaTeal">
             About
           </button>
+          <button onClick={() => router.push("/pricing")} className="hover:text-pivotaTeal">
+            Pricing
+          </button>
         </div>
 
         {/* Authentication & Dropdown */}

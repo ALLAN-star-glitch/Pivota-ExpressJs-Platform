@@ -1,31 +1,37 @@
-// This is your Prisma schema file,
-
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  url      = env("POSTGRES_PRISMA_URL") // uses connection pooling
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model User {
-  id      String  @id @default(cuid()) // or @default(uuid())
-  email   String   @unique
-  username String @unique
+  id        String    @id @default(cuid()) // or @default(uuid())
+  email     String    @unique
   firstName String
-  lastName String
-  phone String @unique //optional and unique
-  password String @unique
-  createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-  role      String   @default("user")
-  toastShown    Boolean  @default(false)
+  lastName  String
+  phone     String    @unique //optional and unique
+  password  String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  roles     Role[]    @relation("UserRoles") // Many-to-many relationship with roles
+  isPremium Boolean   @default(false) // Add a field to track premium status (default is false)
+  plan      String    @default("free") // Default plan is 'free'  // Membership plan field (free, bronze, silver, gold)
 }
 
+model Role {
+  id    String  @id @default(cuid()) // or @default(uuid())
+  name  String  @unique // Role name (e.g., 'user', 'service-provider', 'superAdmin', etc.)
+  users User[]  @relation("UserRoles") // Many-to-many relationship with users
+}
 
-
-
-
+// Enum to define the available plans
+enum Plan {
+  free
+  bronze
+  silver
+  gold
+}

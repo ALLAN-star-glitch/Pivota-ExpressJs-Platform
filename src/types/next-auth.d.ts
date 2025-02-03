@@ -1,26 +1,24 @@
-
-
 import NextAuth from "next-auth";
-
 
 // Extend the NextAuth types
 declare module "next-auth" {
-  // Add the username and firstName fields to the User interface
+  // Add the firstName, roles, and plan fields to the User interface
   interface User {
-    username: string;
-    firstName: string; // Add firstName field
-    role: string;
+    firstName: string;
+    roles: string[]; // Use an array to store multiple roles
+    plan: string;    // Add the plan field to User
   }
 
-  // Extend the Session interface to include both the user data
+  // Extend the Session interface to include both the user data and the plan
   interface Session {
     user: User & {
-      username: string;
-      firstName: string; // Add firstName field here too
-      role: string;
+      firstName: string;
+      roles: string[]; // Include roles as an array
+      plan: string;    // Include plan in session
     };
     token: {
-      username: string
-    }
+      roles: string[]; // Include roles in the token as well
+      plan: string;    // Include plan in the token
+    };
   }
 }
