@@ -6,7 +6,7 @@ import { AiOutlineUser,AiOutlineArrowLeft} from "react-icons/ai";
 import { toast, ToastContainer } from "react-toastify";
 import { useForm, Controller, FieldError, FieldValues } from "react-hook-form";
 import Image from "next/image";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 import { useRouter } from "next/navigation";
 
@@ -90,37 +90,41 @@ const onSubmit = async (data: FieldValues) => {
 
   try {
     const response = await axios.post("/api/user", payload);
-
-    if (response.status === 200 || response.status === 201) { // Check for both 200 and 201
+  
+    if (response.status === 200 || response.status === 201) {
       console.log("User Plan:", payload.plan);
-      console.log("Assigned Roles:", response.data.user?.roles); 
-
+      console.log("Assigned Roles:", response.data.user?.roles);
+  
       toast.success("Registration successful! Redirecting to login...");
-
-      // Ensure `router.push` is called properly
+  
       setTimeout(() => {
         router.push("/login");
       }, 2000);
     } else {
       toast.error(response.data.message || "An error occurred during sign-up.");
     }
-  } catch (error: any) {
+  } catch (error: unknown) {  // Use 'unknown' for the error
     console.error("Error during sign-up:", error);
-    console.error('Response data:', error.response.data);
-    console.error('Response status:', error.response.status);
-    console.error('Response headers:', error.response.headers);
-
-    if (error.response) {
-      toast.error(error.response.data.message || "Registration failed. Please try again.");
-    } else if(error.request) {
-      // The request was made but no response was received
-       console.error('Request data:', error.request);
-    }
-    else {
-      // Something else happened in setting up the request that triggered an Error
-      console.error('Error message:', error.message);
+  
+    if (error instanceof AxiosError) {  // Narrow the type to AxiosError
+      console.error('Response data:', error.response?.data);
+      console.error('Response status:', error.response?.status);
+      console.error('Response headers:', error.response?.headers);
+  
+      if (error.response) {
+        toast.error(error.response.data.message || "Registration failed. Please try again.");
+      } else if(error.request) {
+        console.error('Request data:', error.request);
+      } else {
+        console.error('Error message:', error.message);
+      }
+    } else {
+      // Handle any other error types
+      console.error("An unknown error occurred:", error);
+      toast.error("An unexpected error occurred. Please try again.");
     }
   }
+  
 };
 
   

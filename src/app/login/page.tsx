@@ -232,9 +232,9 @@ const SignIn = () => {
           {/* Sign Up Link */}
           <div className="mt-4 text-center text-sm">
             <p className="text-gray-600">
-              Don&apos;t have an account?{" "}
-              <Link href="/signup" className="text-teal-500 font-semibold">
-                Sign Up
+              Don&apos;t have an account? Visit Our{" "}
+              <Link href="/pricing" className="text-teal-500 font-semibold">
+                Pricing Page to sign up
               </Link>
             </p>
           </div>
