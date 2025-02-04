@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import ClientSession from "../common/ClientSession";
 import PostAdModal from "../common/PostAdModal";
 import AuthenticatedPostAdModal from "../common/AuthenticatedPostAdModal";
+import Image from "next/image";
 
 const NavbarWebsite: React.FC = () => {
   const [mounted, setMounted] = useState(false);
@@ -16,6 +17,8 @@ const NavbarWebsite: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  
 
   useEffect(() => {
     setMounted(true);
@@ -33,8 +36,6 @@ const NavbarWebsite: React.FC = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  if (!mounted) return null;
-  if (status === "loading") return <div>Loading...</div>;
 
   // Ensure user roles are handled as an array
   const userRoles: string[] = session?.user?.roles || ["user"]; // Default role is always 'user'
@@ -56,29 +57,35 @@ const NavbarWebsite: React.FC = () => {
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const handleLogout = () => signOut({ callbackUrl: "/login" });
 
+  
+
   return (
     <nav className="fixed top-0 w-full bg-pivotaNavy text-pivotaWhite shadow-md z-10">
+
       <div className="max-w-screen-xl mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
-        <div className="text-2xl font-bold cursor-pointer" onClick={() => router.push("/")}>
+        
+        <div className="flex justify-between items-center gap-2 text-2xl font-bold cursor-pointer" onClick={() => router.push("/") }>
+          <Image src="/mylogo.png" alt="logo" width={50} height={30}/>
           Pivota
         </div>
 
         {/* Navigation Links */}
         <div className="space-x-6 hidden md:flex">
+        
           <button onClick={() => router.push("/services")} className="hover:text-pivotaTeal">
             Services
           </button>
-          <button onClick={() => router.push("/jobs")} className="hover:text-pivotaTeal">
+          <button onClick={() => router.push("/jobs") } className="hover:text-pivotaTeal">
             Jobs
           </button>
-          <button onClick={() => router.push("/rentals")} className="hover:text-pivotaTeal">
+          <button onClick={() => router.push("/rentals") } className="hover:text-pivotaTeal">
             Rentals
           </button>
-          <button onClick={() => router.push("/about")} className="hover:text-pivotaTeal">
+          <button onClick={() => router.push("/about") } className="hover:text-pivotaTeal">
             About
           </button>
-          <button onClick={() => router.push("/pricing")} className="hover:text-pivotaTeal">
+          <button onClick={() => router.push("/pricing") } className="hover:text-pivotaTeal">
             Pricing
           </button>
         </div>
@@ -90,7 +97,7 @@ const NavbarWebsite: React.FC = () => {
               className="bg-pivotaTeal text-white px-4 py-2 rounded-md hover:bg-pivotaAqua"
               onClick={openAdModal}
             >
-              Post an Ad
+              Post Ad
             </button>
 
             {/* Avatar & Dropdown */}
@@ -134,11 +141,11 @@ const NavbarWebsite: React.FC = () => {
               Post an Ad
             </button>
             <button
-              onClick={() => router.push("/login")}
+              onClick={() => router.push("/login") }
               className="flex items-center space-x-2 cursor-pointer"
             >
               <FaUserCircle size={40} />
-              <span className="font-medium">Login</span>
+              <span className="font-medium hidden md:flex">Login</span>
             </button>
           </div>
         )}

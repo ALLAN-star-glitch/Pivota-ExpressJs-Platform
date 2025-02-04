@@ -139,7 +139,7 @@ const onSubmit = async (data: FieldValues) => {
       backgroundPosition: "center",  // Ensures the background is centered
     }}
   >
-    <div className="bg-gradient-to-b from-pivotaTeal via-black to-pivotaNavy p-8 rounded-lg shadow-lg w-full max-w-6xl z-10 flex-grow">
+    <div className="bg-gradient-to-b from-pivotaTeal via-black to-pivotaNavy p-8 rounded-lg shadow-lg w-full max-w-6xl z-60 flex-grow mt-20">
 
       <h2 className="text-3xl font-semibold text-center text-white mb-3">Sign Up</h2>
 

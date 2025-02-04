@@ -5,7 +5,6 @@ import React from "react";
 const HomePage: React.FC = () => {
   return (
     <div>
-      <NavbarWebsite />
       <main className="relative">
         {/* Hero Section with Image Overlay */}
         <section className="relative text-pivotaWhite text-center py-60 px-6">
