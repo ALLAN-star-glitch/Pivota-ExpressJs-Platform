@@ -35,7 +35,7 @@ export default function AboutPageClient() {
           transition={{ duration: 0.6 }}
         >
           Pivota is a trusted platform that bridges the gap between service 
-          providers and users. Whether you're looking for skilled professionals, 
+          providers and users. Whether you are looking for skilled professionals, 
           job opportunities, or property listings, we ensure a seamless and 
           secure experience.
         </motion.p>

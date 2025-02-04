@@ -1,5 +1,6 @@
 import NavbarWebsite from "@/components/website/NavbarWebsite";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 const HomePage: React.FC = () => {
@@ -69,7 +70,9 @@ const HomePage: React.FC = () => {
         {/* CTA Footer */}
         <section className="py-20 px-6 bg-pivotaNavy text-pivotaWhite text-center">
           <h2 className="text-3xl font-semibold mb-6">Ready to get started?</h2>
+          <Link href="/pricing">
           <button className="bg-pivotaGold text-pivotaWhite py-3 px-6 rounded-lg hover:bg-pivotaCoral transition">Sign Up Now</button>
+          </Link>
         </section>
       </main>
     </div>
