@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { z } from "zod";
 import { ToastContainer, toast } from "react-toastify";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import LoadingBar from "@/components/common/LoadingBar";
@@ -30,11 +30,11 @@ type FormErrors = {
 };
 
 const SignIn = () => {
+  const { data: session, status } = useSession();
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
   });
-
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -83,7 +83,7 @@ const SignIn = () => {
         email: values.email,
         password: values.password,
       });
-  
+
       if (result?.error) {
         setErrors((prevErrors) => ({
           ...prevErrors,
@@ -91,31 +91,34 @@ const SignIn = () => {
         }));
         return;
       }
-  
-      // Fetch session data to get the user role
-      const response = await fetch("/api/auth/session");
-      const session = await response.json();
-  
-      if (!session?.user?.role) {
+
+      // Using useSession to fetch session directly
+      if (!session?.user?.roles) {
         setErrors((prevErrors) => ({
           ...prevErrors,
           apiError: "Unable to determine user role.",
         }));
         return;
       }
-  
+
+      // Default role is "user", so if no premium roles exist, use "user"
+      const userRoles = session.user.roles.length ? session.user.roles : ["user"];
+
       // Define dashboard routes by role
       const roleRoutes: { [key: string]: string } = {
         serviceProvider: "/dashboard/service-provider",
-        jobSeeker: "/dashboard/job-seeker",
-        landlord: "/dashboard/landlord",
         employer: "/dashboard/employer",
-        user: "/dashboard/user"
+        landlord: "/dashboard/landlord",
+        user: "/dashboard/user",
       };
-  
+
+      // Ensure premium roles (if any) are prioritized
+      const dashboardRoute = userRoles
+        .map((role) => roleRoutes[role])
+        .find((route) => route) || "/dashboard";
+
       // Redirect to respective dashboard
-      const dashboardRoute = roleRoutes[session.user.role] || "/dashboard";
-      router.push(`${dashboardRoute}?username=${session.user.username}&success=true`);
+      router.push(`${dashboardRoute}?username=${session.user.firstName}&success=true`);
     } catch (error) {
       console.error("API error:", error);
       setErrors((prevErrors) => ({
@@ -124,7 +127,6 @@ const SignIn = () => {
       }));
     }
   };
-  
 
   // Handle "Go to Homepage" button click
   const handleGoToHomepage = () => {
@@ -135,7 +137,7 @@ const SignIn = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-b from-pivotaNavy to-pivotaTeal">
       {/* Loading Bar */}
-      {loading && <LoadingBar/>}
+      {loading && <LoadingBar />}
 
       {/* LEFT - Image */}
       <div className="w-full md:w-1/2 h-1/2 md:h-screen bg-cover bg-center relative">
@@ -234,17 +236,18 @@ const SignIn = () => {
           </div>
 
           {/* Go to Homepage Button */}
-          <div className="mt-6 flex justify-center">
-            <Link href="/" passHref>
-              <button
-               className="text-teal-500 font-semibold hover:underline"
-               onClick={handleGoToHomepage}>
-                Go to Homepage
-              </button>
-            </Link>
+          <div className="mt-4 text-center">
+            <button
+              className="text-teal-500 font-semibold"
+              onClick={handleGoToHomepage}
+              disabled={loading}
+            >
+              Go to Homepage
+            </button>
           </div>
         </form>
       </div>
+
       <ToastContainer />
     </div>
   );

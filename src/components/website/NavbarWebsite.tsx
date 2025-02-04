@@ -1,21 +1,21 @@
-"use client"
+"use client";
+
 import React, { useState, useEffect, useRef } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ClientSession from "../common/ClientSession";
-import PostAdModal from "../common/PostAdModal"; // Modal for unauthenticated users
-import AuthenticatedPostAdModal from "../common/AuthenticatedPostAdModal"; // Modal for authenticated users
-
+import PostAdModal from "../common/PostAdModal";
+import AuthenticatedPostAdModal from "../common/AuthenticatedPostAdModal";
 
 const NavbarWebsite: React.FC = () => {
   const [mounted, setMounted] = useState(false);
-  const [isAdModalOpen, setIsAdModalOpen] = useState(false); // Track modal state
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Track dropdown state
-  const [showLogoutModal, setShowLogoutModal] = useState(false); // Track logout modal state
+  const [isAdModalOpen, setIsAdModalOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
-  const dropdownRef = useRef<HTMLDivElement>(null); // Reference to the dropdown menu
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -25,59 +25,36 @@ const NavbarWebsite: React.FC = () => {
     // Close dropdown if clicked outside
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false); // Close dropdown if click is outside
+        setIsDropdownOpen(false);
       }
     };
 
     document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside); // Clean up event listener on component unmount
-    };
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
+  if (status === "loading") return <div>Loading...</div>;
 
-  if (status === "loading") {
-    return <div>Loading...</div>; // or show a loading spinner
-  }
+  // Ensure user roles are handled as an array
+  const userRoles: string[] = session?.user?.roles || ["user"]; // Default role is always 'user'
 
-  const userRole = session?.user?.role ?? "";
-  const username = session?.user?.username || "";
+  // Extract a valid premium role if the user has one
+  const premiumRole: "landlord" | "employer" | "serviceProvider" | null =
+    (userRoles.find(role => ["landlord", "employer", "serviceProvider"].includes(role)) as "landlord" | "employer" | "serviceProvider") || null;
 
-  // Valid user roles
-  const validRoles: ("landlord" | "employer" | "serviceProvider")[] = [
-    "landlord",
-    "employer",
-    "serviceProvider",
-  ];
+  const username = session?.user?.firstName || "";
 
-  // Ensure the role is valid, otherwise fallback to "serviceProvider"
-  const validUserRole = validRoles.includes(userRole as "landlord" | "employer" | "serviceProvider")
-    ? (userRole as "landlord" | "employer" | "serviceProvider")
-    : "serviceProvider"; // Default to "serviceProvider" if not valid
-
-  // Handle dashboard redirection
+  // Redirect user to their respective dashboard
   const handleRedirect = () => {
-    if (status === "authenticated" && validUserRole) {
-      // Convert the role to kebab-case for consistent URL naming
-      const kebabCaseRole = validUserRole.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-      router.push(`/dashboard/${kebabCaseRole}`);
+    if (status === "authenticated") {
+      router.push(premiumRole ? `/dashboard/${premiumRole}` : `/dashboard/user`);
     }
   };
 
-  const openAdModal = () => {
-    setIsAdModalOpen(true);
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const handleLogout = () => {
-    signOut({ callbackUrl: "/login" });
-  };
+  const openAdModal = () => setIsAdModalOpen(true);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  const handleLogout = () => signOut({ callbackUrl: "/login" });
 
   return (
     <nav className="fixed top-0 w-full bg-pivotaNavy text-pivotaWhite shadow-md z-10">
@@ -120,12 +97,12 @@ const NavbarWebsite: React.FC = () => {
             <div className="relative" ref={dropdownRef}>
               <div className="flex items-center space-x-2 cursor-pointer" onClick={toggleDropdown}>
                 <FaUserCircle size={40} />
-                <span className="font-medium sm: hidden md:flex">{session?.user?.name || <ClientSession />}</span>
+                <span className="font-medium hidden md:flex">{username || <ClientSession />}</span>
               </div>
 
               {/* Dropdown Menu */}
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg overflow-hidden z-20">
+                <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-20">
                   <button
                     className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-200"
                     onClick={handleRedirect}
@@ -140,7 +117,7 @@ const NavbarWebsite: React.FC = () => {
                   </button>
                   <button
                     className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-200"
-                    onClick={() => setShowLogoutModal(true)} // Show logout confirmation modal
+                    onClick={() => setShowLogoutModal(true)}
                   >
                     Logout
                   </button>
@@ -156,7 +133,6 @@ const NavbarWebsite: React.FC = () => {
             >
               Post an Ad
             </button>
-
             <button
               onClick={() => router.push("/login")}
               className="flex items-center space-x-2 cursor-pointer"
@@ -169,14 +145,14 @@ const NavbarWebsite: React.FC = () => {
       </div>
 
       {/* Modals */}
-      {status === "authenticated" ? (
-        <AuthenticatedPostAdModal
-          isOpen={isAdModalOpen}
-          onClose={() => setIsAdModalOpen(false)}
-          userRole={validUserRole}
-        />
-      ) : (
-        status === "unauthenticated" && (
+      {isAdModalOpen && (
+        session?.user ? (
+          <AuthenticatedPostAdModal
+            isOpen={isAdModalOpen}
+            onClose={() => setIsAdModalOpen(false)}
+           userRoles={userRoles}  // Pass the roles array
+          />
+        ) : (
           <PostAdModal
             isOpen={isAdModalOpen}
             onClose={() => setIsAdModalOpen(false)}
@@ -185,8 +161,8 @@ const NavbarWebsite: React.FC = () => {
         )
       )}
 
-      {/* Logout Confirmation Modal */}
-      {showLogoutModal && (
+      {/* Logout Confirmation Modal (Only for authenticated users) */}
+      {status === "authenticated" && showLogoutModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
           <div className="bg-white rounded-2xl shadow-lg p-6 max-w-sm text-center">
             <h2 className="text-lg font-semibold text-gray-800">Confirm Logout</h2>
@@ -199,7 +175,7 @@ const NavbarWebsite: React.FC = () => {
                 Cancel
               </button>
               <button
-                onClick={handleLogout} // Trigger logout
+                onClick={handleLogout}
                 className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
               >
                 Logout

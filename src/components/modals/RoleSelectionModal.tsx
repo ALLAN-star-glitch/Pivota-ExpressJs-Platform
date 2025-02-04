@@ -42,12 +42,22 @@ const RoleSelectionModal = ({
       toast.error("Please select at least one role.");
       return;
     }
-
+  
+    if (selectedPlan === "premium2" && selectedRoles.length !== 2) {
+      toast.error("Silver plan requires exactly 2 roles.");
+      return;
+    }
+  
+    if (selectedPlan === "premium3" && selectedRoles.length !== 3) {
+      toast.error("Gold plan requires exactly 3 roles.");
+      return;
+    }
+  
     if (selectedRoles.length > maxRoles[selectedPlan]) {
       toast.error(`You can only select up to ${maxRoles[selectedPlan]} roles for this plan.`);
       return;
     }
-
+  
     handleRoleSelection(selectedRoles);
     toast.success("Roles selected successfully!");
   };

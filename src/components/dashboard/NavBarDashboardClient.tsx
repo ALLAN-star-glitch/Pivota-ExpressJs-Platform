@@ -1,4 +1,5 @@
 "use client"
+
 import { useState } from "react";
 import { FaPlusCircle } from "react-icons/fa"; // Icon for "Post an Ad"
 import { FaMoon, FaSun } from "react-icons/fa"; // React Icons for theme switcher
@@ -15,12 +16,20 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
   const [isAdModalOpen, setIsAdModalOpen] = useState(false); // Modal state
   const [isDarkTheme, setIsDarkTheme] = useState(false); // Track theme
 
-  const userRole = session?.user?.roles ?? "";
-  const validRoles: ("landlord" | "employer" | "serviceProvider")[] = ["landlord", "employer", "serviceProvider"];
-  const validUserRole = validRoles.includes(userRole as "landlord" | "employer" | "serviceProvider")
-    ? (userRole as "landlord" | "employer" | "serviceProvider")
-    : "serviceProvider"; // Fallback to "serviceProvider" if role is invalid
+  // Extract user role
+  const userRoles: string[] = session?.user?.roles || ["user"]; // Default role is always 'user'
+  
+  // Determine valid user role (considering both "user" and premium roles)
+  const validRoles: ("landlord" | "employer" | "serviceProvider" | "user")[] = [
+    "landlord", 
+    "employer", 
+    "serviceProvider", 
+    "user"
+  ];
 
+  // Make sure roles are valid
+  const validUserRoles = userRoles.filter(role => validRoles.includes(role as "landlord" | "employer" | "serviceProvider" | "user"));
+  
   return (
     <>
       {/* SEARCH BAR (Small screens only show icon, larger screens show input and icon) */}
@@ -56,10 +65,10 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
 
         {/* Switch Role Button For Large Screens */}
         {session && (
-           <div className="hidden md:flex items-center gap-2 cursor-pointer ">
-             <span className="hidden md:block">Switch Role</span>
-          <Image src="/role-switch.svg" height={18} width={18} alt="role switch" />
-        </div>
+          <div className="hidden md:flex items-center gap-2 cursor-pointer">
+            <span className="hidden md:block">Switch Role</span>
+            <Image src="/role-switch.svg" height={18} width={18} alt="role switch" />
+          </div>
         )}
 
         {/* Switch Role Button for small devices */}
@@ -67,7 +76,6 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
           <Image src="/role-switch.svg" height={18} width={18} alt="role switch" />
         </div>
 
-      
         {/* Theme Switcher Icon */}
         <div
           className="flex items-center gap-2 cursor-pointer"
@@ -80,6 +88,7 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
             <FaMoon size={20} className="text-pivotaTeal" />
           )}
         </div>
+
         {/* Message Icon */}
         <div className="bg-pivotaWhite rounded-full w-7 h-7 flex items-center justify-center cursor-pointer hover:bg-pivotaTeal hover:bg-opacity-10">
           <Image src="/message.png" alt="message" width={20} height={20} />
@@ -96,7 +105,7 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
         {/* User Info */}
         <div className="hidden md:flex flex-col ">
           <span className="text-sm leading-3 font-medium text-pivotaTeal capitalize">{session?.user.firstName}</span>
-          <span className="text-[12px] text-pivotaTeal text-right">{session?.user.role}</span>
+          <span className="text-[12px] text-pivotaTeal text-right">{session?.user.plan} Plan</span>
         </div>
 
         {/* Avatar */}
@@ -126,9 +135,10 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
         <AuthenticatedPostAdModal
           isOpen={isAdModalOpen}
           onClose={() => setIsAdModalOpen(false)}
-          userRole={validUserRole}
+          userRoles={validUserRoles}
         />
       ) : (
+        
         <PostAdModal
           isOpen={isAdModalOpen}
           onClose={() => setIsAdModalOpen(false)}

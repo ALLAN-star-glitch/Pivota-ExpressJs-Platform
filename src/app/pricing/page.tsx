@@ -127,12 +127,12 @@ const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
       backgroundPosition: "center",  // Ensures the background is centered
     }}
   >
-    <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl z-10 flex-grow">
+    <div className="bg-gradient-to-b from-pivotaTeal via-black to-pivotaNavy p-8 rounded-lg shadow-lg w-full max-w-6xl z-10 flex-grow">
 
-      <h2 className="text-3xl font-semibold text-center text-teal-600 mb-3">Sign Up</h2>
+      <h2 className="text-3xl font-semibold text-center text-white mb-3">Sign Up</h2>
 
       {!isRoleSelected && (
-        <h3 className="text-sm font-semibold text-center text-teal-400 mb-3">
+        <h3 className="text-sm font-semibold text-center text-white mb-3">
           Start with a Free Plan and explore what we've got for you!
         </h3>
       )}
@@ -141,7 +141,7 @@ const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
         <div className="flex items-center space-x-2 mb-4">
           <button
             onClick={handleBack}
-            className="text-teal-600 hover:text-teal-800 text-lg flex items-center"
+            className="text-white hover:bg-pivotaGold text-lg flex items-center"
           >
             <AiOutlineArrowLeft className="mr-2" />
             Back to Plan Selection
@@ -290,18 +290,18 @@ const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
       ) : (
         <div className="space-y-4">
           {/* Display the selected plan */}
-          <div className="text-center text-lg mb-4">
+          <div className="text-center text-white text-lg mb-4">
             <p><strong>Selected Plan:</strong> {selectedPlan === 'free' ? 'Free' : selectedPlan === 'premium1' ? 'Bronze' : selectedPlan === 'premium2' ? 'Silver' : 'Gold'}</p>
           </div>
 
-          <h3 className="text-xl font-semibold text-center mb-6">Register with Your Selected Plan</h3>
+          <h3 className="text-xl font-semibold text-center mb-6 text-white">Register with Your Selected Plan</h3>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-h-[90vh] overflow-y-auto">
       {/* Step 1: First Name, Last Name, Phone */}
       {step === 1 && (
         <>
           <div>
-            <label className="block text-sm font-semibold text-teal-600">First Name</label>
+            <label className="block text-sm font-semibold text-white">First Name</label>
             <Controller
               name="firstName"
               control={control}
@@ -319,7 +319,7 @@ const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-teal-600">Last Name</label>
+            <label className="block text-sm font-semibold text-white">Last Name</label>
             <Controller
               name="lastName"
               control={control}
@@ -337,7 +337,7 @@ const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-teal-600">Phone</label>
+            <label className="block text-sm font-semibold text-white">Phone</label>
             <Controller
               name="phone"
               control={control}
@@ -360,7 +360,7 @@ const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
       {step === 2 && (
         <>
           <div>
-            <label className="block text-sm font-semibold text-teal-600">Email</label>
+            <label className="block text-sm font-semibold text-white">Email</label>
             <Controller
               name="email"
               control={control}
@@ -378,7 +378,7 @@ const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-teal-600">Password</label>
+            <label className="block text-sm font-semibold text-white">Password</label>
             <Controller
               name="password"
               control={control}
@@ -396,7 +396,7 @@ const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-teal-600">Confirm Password</label>
+            <label className="block text-sm font-semibold text-white">Confirm Password</label>
             <Controller
               name="confirmPassword"
               control={control}

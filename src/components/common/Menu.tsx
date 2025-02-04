@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +10,7 @@ interface MenuItem {
   label: string;
   href?: string;
   action?: string;
-  visible?: string[]; // Array of roles that should see this item
+  visible?: string[]; // Roles allowed to see this item
 }
 
 interface MenuSection {
@@ -18,6 +18,7 @@ interface MenuSection {
   items: MenuItem[];
 }
 
+// Define menu structure
 const menuItems: MenuSection[] = [
   {
     title: "MAIN",
@@ -28,7 +29,6 @@ const menuItems: MenuSection[] = [
         href: "/admin",
         visible: ["superAdmin", "landlord", "employer", "user", "serviceProvider"],
       },
-      
     ],
   },
   {
@@ -46,24 +46,24 @@ const menuItems: MenuSection[] = [
     title: "JOBS",
     items: [
       {
-        icon: "/joblistings.svg", // An icon representing job listings
+        icon: "/joblistings.svg",
         label: "Job Listings",
-        href: "/admin/job-listings", // The route for Employer to manage job listings
-        visible: ["employer", "superAdmin", "user"], // Make sure it's visible only for Employers
+        href: "/admin/job-listings",
+        visible: ["employer", "superAdmin", "user"],
       },
-    ]
+    ],
   },
   {
-  title: "SERVICES",
-  items: [
-    {
-      icon: "/services.svg", // You can use an icon related to services
-      label: "Service Listings", // The label for Service Listings
-      href: "/admin/services", // This should link to the page where Service Providers manage their listings
-      visible: ["serviceProvider", "superAdmin", "user"], 
-    },
-  ]
-},
+    title: "SERVICES",
+    items: [
+      {
+        icon: "/services.svg",
+        label: "Service Listings",
+        href: "/admin/services",
+        visible: ["serviceProvider", "superAdmin", "user"],
+      },
+    ],
+  },
   {
     title: "RENTALS",
     items: [
@@ -119,62 +119,58 @@ const menuItems: MenuSection[] = [
 
 const Menu = () => {
   const [showModal, setShowModal] = useState(false);
-  const { data: session, status } = useSession(); // Fetch session data
-
-  const userRole = session?.user?.role || null; // Ensure userRole is defined
-
-  useEffect(() => {
-    // Removed console logs
-  }, [session, userRole]);
+  const { data: session, status } = useSession();
 
   if (status === "loading") {
-    return <div>Loading...</div>; // Show loading state until session is available
+    return <div>Loading...</div>;
   }
 
-  // If there's no userRole, don't render anything
-  if (!userRole) {
-    return <div>No user role found. Please log in.</div>;
-  }
+  // Ensure the user always has at least the "user" role
+  const userRoles: string[] = session?.user?.roles || ["user"];
 
-  // Filter out menu items based on user role
+  // Filter menu items based on user roles
   const visibleMenuItems = menuItems.map((section) => ({
     ...section,
     items: section.items.filter((item) =>
-      item.visible?.includes(userRole)
+      item.visible?.some((role) => userRoles.includes(role))
     ),
   }));
 
   return (
     <div className="mt-4 text-sm">
-  
-      {visibleMenuItems.map((section) => (
-        section.items.length > 0 && (
-          <div className="flex flex-col gap-2" key={section.title}>
-            <span className="hidden lg:block font-light text-gray-300 my-4">{section.title}</span>
-            {section.items.map((item) =>
-              item.action === "logout" ? (
-                <button
-                  key={item.label}
-                  onClick={() => setShowModal(true)}
-                  className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-                >
-                  <Image src={item.icon} alt={item.label} width={25} height={25} />
-                  <span className="hidden lg:block">{item.label}</span>
-                </button>
-              ) : item.href ? (
-                <Link
-                  href={item.href}
-                  key={item.label}
-                  className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-pivotaTeal transition-colors"
-                >
-                  <Image src={item.icon} alt={item.label} width={35} height={35} className="fill-white" />
-                  <span className="hidden lg:block">{item.label}</span>
-                </Link>
-              ) : null
-            )}
-          </div>
-        )
-      ))}
+      {visibleMenuItems.map(
+        (section) =>
+          section.items.length > 0 && (
+            <div className="flex flex-col gap-2" key={section.title}>
+              <span className="hidden lg:block font-light text-gray-300 my-4">
+                {section.title}
+              </span>
+              {section.items.map((item) =>
+                item.action === "logout" ? (
+                  <button
+                    key={item.label}
+                    onClick={() => setShowModal(true)}
+                    className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                  >
+                    <Image src={item.icon} alt={item.label} width={25} height={25} />
+                    <span className="hidden lg:block">{item.label}</span>
+                  </button>
+                ) : item.href ? (
+                  <Link
+                    href={item.href}
+                    key={item.label}
+                    className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-pivotaTeal transition-colors"
+                  >
+                    <Image src={item.icon} alt={item.label} width={35} height={35} />
+                    <span className="hidden lg:block">{item.label}</span>
+                  </Link>
+                ) : null
+              )}
+            </div>
+          )
+      )}
+
+      {/* Logout Confirmation Modal */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
           <div className="bg-white rounded-2xl shadow-lg p-6 max-w-sm text-center">
