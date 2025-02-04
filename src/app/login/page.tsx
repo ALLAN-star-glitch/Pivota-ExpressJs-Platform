@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { z } from "zod";
 import { ToastContainer, toast } from "react-toastify";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import LoadingBar from "@/components/common/LoadingBar";
+
 
 // Define the validation schema with Zod
 const userSchema = z.object({
@@ -39,7 +40,7 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const router = useRouter();
-
+  
   // Effect to show API error toast
   useEffect(() => {
     if (errors.apiError) {
@@ -75,15 +76,20 @@ const SignIn = () => {
     setLoading(false); // Stop loading after validation
   };
 
+
+
   const onSubmit = async (values: FormData) => {
     try {
-      // Sign in with credentials
+      // Log out the current session to ensure cookies are cleared
+      await signOut({ redirect: false });
+  
+      // Sign in with credentials after logging out
       const result = await signIn("credentials", {
         redirect: false,
         email: values.email,
         password: values.password,
       });
-
+  
       if (result?.error) {
         setErrors((prevErrors) => ({
           ...prevErrors,
@@ -91,8 +97,8 @@ const SignIn = () => {
         }));
         return;
       }
-
-      // Using useSession to fetch session directly
+  
+      
       if (!session?.user?.roles) {
         setErrors((prevErrors) => ({
           ...prevErrors,
@@ -100,33 +106,31 @@ const SignIn = () => {
         }));
         return;
       }
-
-      // Default role is "user", so if no premium roles exist, use "user"
+  
       const userRoles = session.user.roles.length ? session.user.roles : ["user"];
-
-      // Define dashboard routes by role
       const roleRoutes: { [key: string]: string } = {
         serviceProvider: "/dashboard/service-provider",
         employer: "/dashboard/employer",
         landlord: "/dashboard/landlord",
         user: "/dashboard/user",
       };
-
-      // Ensure premium roles (if any) are prioritized
-      const dashboardRoute = userRoles
-        .map((role) => roleRoutes[role])
-        .find((route) => route) || "/dashboard";
-
+  
+      const firstSelectedRole = userRoles[0];
+      const dashboardRoute = roleRoutes[firstSelectedRole] || roleRoutes["user"];
+  
       // Redirect to respective dashboard
       router.push(`${dashboardRoute}?username=${session.user.firstName}&success=true`);
     } catch (error) {
-      console.error("API error:", error);
+      console.error("Error details:", error); // More detailed error logging
       setErrors((prevErrors) => ({
         ...prevErrors,
         apiError: "An error occurred while processing your request.",
       }));
     }
   };
+  
+
+  
 
   // Handle "Go to Homepage" button click
   const handleGoToHomepage = () => {

@@ -48,7 +48,7 @@ const NavbarWebsite: React.FC = () => {
   // Redirect user to their respective dashboard
   const handleRedirect = () => {
     if (status === "authenticated") {
-      router.push(premiumRole ? `/dashboard/${premiumRole}` : `/dashboard/user`);
+      router.push(`/dashboard/user`);
     }
   };
 

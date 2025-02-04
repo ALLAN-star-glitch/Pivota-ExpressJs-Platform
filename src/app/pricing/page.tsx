@@ -4,7 +4,7 @@ import RoleSelectionModal from "@/components/modals/RoleSelectionModal";
 import { useState } from "react";
 import { AiOutlineUser,AiOutlineArrowLeft} from "react-icons/ai";
 import { toast, ToastContainer } from "react-toastify";
-import { useForm, Controller, FieldError } from "react-hook-form";
+import { useForm, Controller, FieldError, FieldValues } from "react-hook-form";
 import Image from "next/image";
 import axios from "axios";
 
@@ -15,6 +15,14 @@ import { useRouter } from "next/navigation";
 // Define the Plan Type
 type Plan = "free" | "premium1" | "premium2" | "premium3";
 
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  phone: string;
+}
 const Page = () => {
   const [selectedPlan, setSelectedPlan] = useState<Plan>("free");
   const [showModal, setShowModal] = useState(false);
@@ -55,66 +63,66 @@ const Page = () => {
 const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
 
 
-  const onSubmit = async (data: any) => {
-    if (!isRoleSelected) {
-      toast.error("Please select your roles before submitting.");
-      return;
-    }
-  
-    console.log("Selected Plan:", selectedPlan);
-  
-   
-    console.log("Selected Roles:", selectedRoles);
+const onSubmit = async (data: FieldValues) => {
+  // Type cast the 'data' object to FormData
+  const formData = data as FormData;
 
-    
-  
-    const payload = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      password: data.password,
-      confirmPassword: data.confirmPassword,
-      phone: data.phone,
-      plan: selectedPlan === "free" ? "free" : selectedPlan === "premium1" ? "bronze" : selectedPlan === "premium2" ? "silver" : "gold",
-      roles: selectedRoles,
-    };
+  if (!isRoleSelected) {
+    toast.error("Please select your roles before submitting.");
+    return;
+  }
 
-    console.log("Payload being sent:", payload);  // Log the payload to make sure everything looks correct
-  
-    try {
-      const response = await axios.post("/api/user", payload);
-  
-      if (response.status === 200 || response.status === 201) { // Check for both 200 and 201
-        console.log("User Plan:", payload.plan);
-        console.log("Assigned Roles:", response.data.user?.roles); 
-  
-        toast.success("Registration successful! Redirecting to login...");
-  
-        // Ensure `router.push` is called properly
-        setTimeout(() => {
-          router.push("/login");
-        }, 2000);
-      } else {
-        toast.error(response.data.message || "An error occurred during sign-up.");
-      }
-    } catch (error: any) {
-      console.error("Error during sign-up:", error);
-      console.error('Response data:', error.response.data);
-      console.error('Response status:', error.response.status);
-      console.error('Response headers:', error.response.headers);
-      
-      if (error.response) {
-        toast.error(error.response.data.message || "Registration failed. Please try again.");
-      } else if(error.request) {
-        // The request was made but no response was received
-         console.error('Request data:', error.request);
-      }
-      else {
-        // Something else happened in setting up the request that triggered an Error
-        console.error('Error message:', error.message);
-      }
-    }
+  console.log("Selected Plan:", selectedPlan);
+  console.log("Selected Roles:", selectedRoles);
+
+  const payload = {
+    firstName: formData.firstName,
+    lastName: formData.lastName,
+    email: formData.email,
+    password: formData.password,
+    confirmPassword: formData.confirmPassword,
+    phone: formData.phone,
+    plan: selectedPlan === "free" ? "free" : selectedPlan === "premium1" ? "bronze" : selectedPlan === "premium2" ? "silver" : "gold",
+    roles: selectedRoles,
   };
+
+  console.log("Payload being sent:", payload);  // Log the payload to make sure everything looks correct
+
+  try {
+    const response = await axios.post("/api/user", payload);
+
+    if (response.status === 200 || response.status === 201) { // Check for both 200 and 201
+      console.log("User Plan:", payload.plan);
+      console.log("Assigned Roles:", response.data.user?.roles); 
+
+      toast.success("Registration successful! Redirecting to login...");
+
+      // Ensure `router.push` is called properly
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
+    } else {
+      toast.error(response.data.message || "An error occurred during sign-up.");
+    }
+  } catch (error: any) {
+    console.error("Error during sign-up:", error);
+    console.error('Response data:', error.response.data);
+    console.error('Response status:', error.response.status);
+    console.error('Response headers:', error.response.headers);
+
+    if (error.response) {
+      toast.error(error.response.data.message || "Registration failed. Please try again.");
+    } else if(error.request) {
+      // The request was made but no response was received
+       console.error('Request data:', error.request);
+    }
+    else {
+      // Something else happened in setting up the request that triggered an Error
+      console.error('Error message:', error.message);
+    }
+  }
+};
+
   
 
   return (
