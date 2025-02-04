@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 // Define the Plan Type
 type Plan = "free" | "premium1" | "premium2" | "premium3";
 
-const page = () => {
+const Page = () => {
   const [selectedPlan, setSelectedPlan] = useState<Plan>("free");
   const [showModal, setShowModal] = useState(false);
   const [isRoleSelected, setIsRoleSelected] = useState(false);
@@ -133,7 +133,7 @@ const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
 
       {!isRoleSelected && (
         <h3 className="text-sm font-semibold text-center text-white mb-3">
-          Start with a Free Plan and explore what we've got for you!
+          Start with a Free Plan and explore what we have for you!
         </h3>
       )}
 
@@ -523,4 +523,4 @@ const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   );
 };
 
-export default page;
+export default Page;
