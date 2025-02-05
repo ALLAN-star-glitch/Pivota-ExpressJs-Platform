@@ -12,7 +12,7 @@ export default function AboutPageClient() {
     <div className="mt-20">
       {/* Introduction Section */}
       <motion.div
-        className="bg-gradient-to-r from-pivotaTeal to-pivotaAqua text-pivotaWhite py-16 px-8"
+        className="py-16 px-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
