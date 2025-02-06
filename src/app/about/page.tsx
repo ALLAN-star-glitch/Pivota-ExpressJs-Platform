@@ -1,5 +1,5 @@
 // app/about/page.js
-import AboutPageClient from "@/components/website/AboutPageClient";
+import AboutPageClient from "@/components/website/about-page/AboutPageClient";
 
 // SEO metadata for the page
 export const metadata = {

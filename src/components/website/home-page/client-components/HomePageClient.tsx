@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FaBriefcase, FaHome, FaTools, FaStar, FaUsers, FaRocket, FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import WhatWeOffer from "./WhatWeOffer";
+import SearchSection from "./SearchSection";
+import AvailableListings from "../server-components/AvailableListings";
 
 const slides = [
   {
@@ -124,8 +125,50 @@ export default function HomePageClient() {
         </div>
       </div>
 
-      {/* Core Offerings */}
-      <WhatWeOffer />
+      <SearchSection/>
+
+      {/* What We Offer Section */}
+      <div className="py-16 bg-pivotaLightGray">
+        <h2 className="text-4xl font-semibold text-pivotaNavy mb-6">What We Offer</h2>
+        <p className="text-lg text-pivotaNavy mb-12">
+          We connect you to the best opportunities in the job market, reliable services, and quality housing.
+          Explore our diverse categories to find exactly what you need.
+        </p>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <FaBriefcase className="text-pivotaTeal text-4xl mb-4" />
+            <h3 className="text-xl font-semibold text-pivotaNavy">Job Opportunities</h3>
+            <p className="text-sm text-pivotaNavy">
+              Discover full-time, part-time, freelance, and remote job openings across various industries.
+            </p>
+            <button className="mt-4 text-pivotaTeal hover:underline">Explore Jobs</button>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <FaTools className="text-pivotaTeal text-4xl mb-4" />
+            <h3 className="text-xl font-semibold text-pivotaNavy">Professional Services</h3>
+            <p className="text-sm text-pivotaNavy">
+              Access a wide range of services from skilled professionals in fields like plumbing, electrical work, tutoring, and more.
+            </p>
+            <button className="mt-4 text-pivotaTeal hover:underline">Find Services</button>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <FaHome className="text-pivotaTeal text-4xl mb-4" />
+            <h3 className="text-xl font-semibold text-pivotaNavy">Housing & Rentals</h3>
+            <p className="text-sm text-pivotaNavy">
+              Find the perfect rental home or browse properties for sale in various locations.
+            </p>
+            <button className="mt-4 text-pivotaTeal hover:underline">Browse Housing</button>
+          </div>
+        </div>
+      </div>
+
+        {/* Available Listings Section */}
+        <AvailableListings />
+
+    
 
       {/* Membership Plans */}
       <div className="py-16 px-8 text-center">

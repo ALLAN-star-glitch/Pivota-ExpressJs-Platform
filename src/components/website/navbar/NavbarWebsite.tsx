@@ -4,9 +4,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import ClientSession from "../common/ClientSession";
-import PostAdModal from "../common/PostAdModal";
-import AuthenticatedPostAdModal from "../common/AuthenticatedPostAdModal";
+import ClientSession from "../../common/ClientSession";
+import PostAdModal from "../../common/PostAdModal";
+import AuthenticatedPostAdModal from "../../common/AuthenticatedPostAdModal";
 import Image from "next/image";
 
 const NavbarWebsite: React.FC = () => {
@@ -60,7 +60,7 @@ const NavbarWebsite: React.FC = () => {
   
 
   return (
-    <nav className="fixed top-0 w-full bg-pivotaNavy text-pivotaWhite shadow-md z-10">
+    <nav className="fixed top-0 w-full opacity-80 bg-pivotaTeal  text-pivotaWhite shadow-md z-10">
 
       <div className="max-w-screen-xl mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
@@ -73,19 +73,19 @@ const NavbarWebsite: React.FC = () => {
         {/* Navigation Links */}
         <div className="space-x-6 hidden md:flex">
         
-          <button onClick={() => router.push("/services")} className="hover:text-pivotaTeal">
-            Services
+          <button onClick={() => router.push("/services-providers")} className="hover:text-pivotaGold">
+            Services Providers
           </button>
-          <button onClick={() => router.push("/jobs") } className="hover:text-pivotaTeal">
+          <button onClick={() => router.push("/jobs") } className="hover:text-pivotaGold">
             Jobs
           </button>
-          <button onClick={() => router.push("/rentals") } className="hover:text-pivotaTeal">
-            Rentals
+          <button onClick={() => router.push("/houses") } className="hover:text-pivotaGold">
+            Houses
           </button>
-          <button onClick={() => router.push("/about") } className="hover:text-pivotaTeal">
+          <button onClick={() => router.push("/about") } className="hover:text-pivotaGold">
             About
           </button>
-          <button onClick={() => router.push("/pricing") } className="hover:text-pivotaTeal">
+          <button onClick={() => router.push("/pricing") } className="hover:text-pivotaGold">
             Pricing
           </button>
         </div>
@@ -94,7 +94,7 @@ const NavbarWebsite: React.FC = () => {
         {status === "authenticated" ? (
           <div className="flex items-center space-x-4">
             <button
-              className="bg-pivotaTeal text-white px-4 py-2 rounded-md hover:bg-pivotaAqua"
+              className="bg-pivotaGold text-white px-4 py-2 rounded-md hover:bg-pivotaAqua"
               onClick={openAdModal}
             >
               Post Ad
@@ -135,7 +135,7 @@ const NavbarWebsite: React.FC = () => {
         ) : (
           <div className="flex items-center space-x-4">
             <button
-              className="bg-pivotaTeal text-white px-4 py-2 rounded-md hover:bg-pivotaAqua"
+              className="bg-pivotaGold text-black px-4 py-2 rounded-md hover:bg-orange-200"
               onClick={openAdModal}
             >
               Post an Ad

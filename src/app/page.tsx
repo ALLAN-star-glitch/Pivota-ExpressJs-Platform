@@ -1,7 +1,9 @@
-// app/page.tsx (Server Component)
-import HomePageClient from "@/components/website/HomePageComponent";
+import HeroSection from "@/components/website/home-page/client-components/HeroSection";
+import SearchSection from "@/components/website/home-page/client-components/SearchSection";
+import SuccessStories from "@/components/website/home-page/client-components/SuccessStories";
+import WhatWeOffer from "@/components/website/home-page/client-components/SuccessStories";
+import AvailableListings from "@/components/website/home-page/server-components/AvailableListings";
 import { Metadata } from "next";
-
 
 export const metadata: Metadata = {
   title: "Pivota - Find Jobs, Services, and Housing Effortlessly",
@@ -21,5 +23,25 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <HomePageClient />;
+  return (
+    <>
+      <HeroSection />
+      
+      {/* Title and Description Above Search */}
+      <section className="py-16 px-8 text-center text-gray-700">
+        <h2 className="text-4xl font-bold mb-4">Discover Your Next Opportunity</h2>
+        <p className="text-lg mb-6">
+          Whether you're looking for a job, hiring a service provider, or finding your next home, 
+          Pivota connects you with the best opportunities in one place.
+        </p>        
+      </section>
+
+      {/* Search Section */}
+      <SearchSection />
+
+      <AvailableListings/>
+
+   
+    </>
+  );
 }
