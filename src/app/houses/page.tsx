@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image';
 import React, { useState } from 'react';
 
 export default function HousesPage() {
@@ -138,7 +139,7 @@ export default function HousesPage() {
               {filteredHouses.length > 0 ? (
                 filteredHouses.map((house) => (
                   <div key={house.id} className="bg-white shadow-lg rounded-lg p-6">
-                    <img
+                    <Image
                       src={house.image}
                       alt={house.name}
                       className="w-full h-40 object-cover rounded-md"

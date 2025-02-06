@@ -31,7 +31,7 @@ export default function HomePage() {
       <section className="py-16 px-8 text-center text-gray-700">
         <h2 className="text-4xl font-bold mb-4">Discover Your Next Opportunity</h2>
         <p className="text-lg mb-6">
-          Whether you're looking for a job, hiring a service provider, or finding your next home, 
+          Whether you are looking for a job, hiring a service provider, or finding your next home, 
           Pivota connects you with the best opportunities in one place.
         </p>        
       </section>
