@@ -35,7 +35,7 @@ export default function HomePage() {
       Discover Your Next Opportunity
     </h2>
     <p className="text-base sm:text-lg text-gray-600 mb-8 leading-relaxed">
-      Whether you're searching for a job, hiring a service provider, or finding your next home, 
+      Whether you are searching for a job, hiring a service provider, or finding your next home, 
       Pivota connects you with the best opportunities in one place.
     </p>
     <button className="bg-pivotaTeal text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-teal-700 transition duration-300 w-full sm:w-auto">
