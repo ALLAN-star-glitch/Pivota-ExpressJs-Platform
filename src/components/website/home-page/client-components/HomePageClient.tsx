@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FaBriefcase, FaHome, FaTools, FaStar, FaUsers, FaRocket, FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import SearchSection from "./SearchSection";
-import AvailableListings from "../server-components/AvailableListings";
+import AvailableListings from "./AvailableListings";
 
 const slides = [
   {
