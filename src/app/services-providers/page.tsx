@@ -1,5 +1,6 @@
 "use client"
 
+import Image from 'next/image';
 import React, { useState } from 'react';
 
 export default function Page() {
@@ -156,9 +157,11 @@ export default function Page() {
               {filteredProviders.length > 0 ? (
                 filteredProviders.map((provider) => (
                   <div key={provider.id} className="bg-white shadow-lg rounded-lg p-6">
-                    <img
+                    <Image
                       src={provider.image}
                       alt={provider.name}
+                      width={30}
+                      height={30}
                       className="w-full h-40 object-cover rounded-md"
                     />
                     <h3 className="mt-4 text-xl font-semibold text-pivotaNavy">

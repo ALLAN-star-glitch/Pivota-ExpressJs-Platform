@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FaBriefcase, FaHome, FaTools } from "react-icons/fa";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 type JobListing = {
   title: string;
@@ -82,7 +83,7 @@ export default function AvailableListings() {
             className="bg-white/80 backdrop-blur-md text-pivotaNavy p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 flex flex-col items-center"
             whileHover={{ scale: 1.05 }}
           >
-            <img src={(item as any).image} alt={(item as any).title} className="w-20 h-20 object-cover rounded-lg mb-3" />
+            <Image src={(item as any).image} alt={(item as any).title} width={30} height={30} className="w-20 h-20 object-cover rounded-lg mb-3" />
             {activeCategory === "Jobs" && (
               <>
                 <h4 className="font-semibold text-lg sm:text-xl mb-2">{(item as JobListing).title}</h4>
