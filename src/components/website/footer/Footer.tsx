@@ -17,7 +17,7 @@ export default function Footer() {
       transition={{ duration: 1 }}
     >
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-60 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-pivotaTeal bg-opacity-60 pointer-events-none"></div>
 
       <div className="container mx-auto text-center md:text-left px-4 max-w-6xl relative z-5">
         {/* Footer Main Content */}
