@@ -142,6 +142,8 @@ export default function HousesPage() {
                     <Image
                       src={house.image}
                       alt={house.name}
+                      width={200}
+                      height={200}
                       className="w-full h-40 object-cover rounded-md"
                     />
                     <h3 className="mt-4 text-xl font-semibold text-pivotaNavy">

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import Image from "next/image";
 
 // Categories and locations
 const categories = ["Jobs", "Service Providers", "Housing"];
@@ -22,31 +23,31 @@ type SearchItem = {
 
 const searchData: SearchItem[] = [
   // Jobs
-  { title: "Software Engineer", category: "Jobs", location: "Nairobi", salary: "KSH 120,000", type: "Full-Time", image: "https://via.placeholder.com/50" },
-  { title: "Graphic Designer", category: "Jobs", location: "Mombasa", salary: "KSH 80,000", type: "Part-Time", image: "https://via.placeholder.com/50" },
-  { title: "Data Entry Clerk", category: "Jobs", location: "Nakuru", salary: "KSH 40,000", type: "Remote", image: "https://via.placeholder.com/50" },
-  { title: "Content Writer", category: "Jobs", location: "Nairobi", salary: "KSH 60,000", type: "Freelance", image: "https://via.placeholder.com/50" },
-  { title: "Customer Support", category: "Jobs", location: "Mombasa", salary: "KSH 45,000", type: "Full-Time", image: "https://via.placeholder.com/50" },
-  { title: "Product Manager", category: "Jobs", location: "Nairobi", salary: "KSH 150,000", type: "Full-Time", image: "https://via.placeholder.com/50" },
-  { title: "HR Specialist", category: "Jobs", location: "Kisumu", salary: "KSH 90,000", type: "Remote", image: "https://via.placeholder.com/50" },
+  { title: "Software Engineer", category: "Jobs", location: "Nairobi", salary: "KSH 120,000", type: "Full-Time", image: "/allan.jpg" },
+  { title: "Graphic Designer", category: "Jobs", location: "Mombasa", salary: "KSH 80,000", type: "Part-Time", image: "/allan.jpg" },
+  { title: "Data Entry Clerk", category: "Jobs", location: "Nakuru", salary: "KSH 40,000", type: "Remote", image: "/allan.jpg" },
+  { title: "Content Writer", category: "Jobs", location: "Nairobi", salary: "KSH 60,000", type: "Freelance", image: "/allan.jpg" },
+  { title: "Customer Support", category: "Jobs", location: "Mombasa", salary: "KSH 45,000", type: "Full-Time", image: "/allan.jpg" },
+  { title: "Product Manager", category: "Jobs", location: "Nairobi", salary: "KSH 150,000", type: "Full-Time", image: "/allan.jpg" },
+  { title: "HR Specialist", category: "Jobs", location: "Kisumu", salary: "KSH 90,000", type: "Remote", image: "/allan.jpg" },
   
   // Service Providers (Real names and titles)
-  { title: "John Doe", category: "Service Providers", location: "Nairobi", rate: "KSH 1,500/hr", availability: "24/7", image: "https://via.placeholder.com/50?text=John" },
-  { title: "Jane Smith", category: "Service Providers", location: "Kisumu", rate: "KSH 2,000/hr", availability: "9 AM - 5 PM", image: "https://via.placeholder.com/50?text=Jane" },
-  { title: "Peter Johnson", category: "Service Providers", location: "Nakuru", rate: "KSH 1,200/hr", availability: "Mon-Fri", image: "https://via.placeholder.com/50?text=Peter" },
-  { title: "Lucy Brown", category: "Service Providers", location: "Mombasa", rate: "KSH 800/hr", availability: "24/7", image: "https://via.placeholder.com/50?text=Lucy" },
-  { title: "Mike Williams", category: "Service Providers", location: "Nairobi", rate: "KSH 1,000/hr", availability: "Mon-Sat", image: "https://via.placeholder.com/50?text=Mike" },
-  { title: "Sarah Lee", category: "Service Providers", location: "Kisumu", rate: "KSH 2,500/hr", availability: "Mon-Fri", image: "https://via.placeholder.com/50?text=Sarah" },
-  { title: "David Evans", category: "Service Providers", location: "Mombasa", rate: "KSH 600/hr", availability: "Weekdays", image: "https://via.placeholder.com/50?text=David" },
+  { title: "John Doe", category: "Service Providers", location: "Nairobi", rate: "KSH 1,500/hr", availability: "24/7", image: "/allan.jpg" },
+  { title: "Jane Smith", category: "Service Providers", location: "Kisumu", rate: "KSH 2,000/hr", availability: "9 AM - 5 PM", image: "/allan.jpg" },
+  { title: "Peter Johnson", category: "Service Providers", location: "Nakuru", rate: "KSH 1,200/hr", availability: "Mon-Fri", image: "/allan.jpg" },
+  { title: "Lucy Brown", category: "Service Providers", location: "Mombasa", rate: "KSH 800/hr", availability: "24/7", image: "/allan.jpg" },
+  { title: "Mike Williams", category: "Service Providers", location: "Nairobi", rate: "KSH 1,000/hr", availability: "Mon-Sat", image: "/allan.jpg" },
+  { title: "Sarah Lee", category: "Service Providers", location: "Kisumu", rate: "KSH 2,500/hr", availability: "Mon-Fri", image: "/allan.jpg" },
+  { title: "David Evans", category: "Service Providers", location: "Mombasa", rate: "KSH 600/hr", availability: "Weekdays", image: "/allan.jpg" },
 
   // Housing
-  { title: "2 Bedroom Apartment", category: "Housing", location: "Nairobi", price: "KSH 35,000/month", type: "Rental", image: "https://via.placeholder.com/50" },
-  { title: "4 Bedroom House", category: "Housing", location: "Mombasa", price: "KSH 8M", type: "For Sale", image: "https://via.placeholder.com/50" },
-  { title: "1 Bedroom Studio", category: "Housing", location: "Nakuru", price: "KSH 15,000/month", type: "Rental", image: "https://via.placeholder.com/50" },
-  { title: "5 Bedroom Villa", category: "Housing", location: "Kisumu", price: "KSH 15M", type: "For Sale", image: "https://via.placeholder.com/50" },
-  { title: "3 Bedroom House", category: "Housing", location: "Eldoret", price: "KSH 7M", type: "For Sale", image: "https://via.placeholder.com/50" },
-  { title: "1 Bedroom Condo", category: "Housing", location: "Nairobi", price: "KSH 20,000/month", type: "Rental", image: "https://via.placeholder.com/50" },
-  { title: "6 Bedroom Mansion", category: "Housing", location: "Mombasa", price: "KSH 25M", type: "For Sale", image: "https://via.placeholder.com/50" },
+  { title: "2 Bedroom Apartment", category: "Housing", location: "Nairobi", price: "KSH 35,000/month", type: "Rental", image: "/allan.jpg" },
+  { title: "4 Bedroom House", category: "Housing", location: "Mombasa", price: "KSH 8M", type: "For Sale", image: "/allan.jpg" },
+  { title: "1 Bedroom Studio", category: "Housing", location: "Nakuru", price: "KSH 15,000/month", type: "Rental", image: "/allan.jpg" },
+  { title: "5 Bedroom Villa", category: "Housing", location: "Kisumu", price: "KSH 15M", type: "For Sale", image: "/allan.jpg" },
+  { title: "3 Bedroom House", category: "Housing", location: "Eldoret", price: "KSH 7M", type: "For Sale", image: "/allan.jpg" },
+  { title: "1 Bedroom Condo", category: "Housing", location: "Nairobi", price: "KSH 20,000/month", type: "Rental", image: "/allan.jpg" },
+  { title: "6 Bedroom Mansion", category: "Housing", location: "Mombasa", price: "KSH 25M", type: "For Sale", image: "/allan.jpg" },
 ];
 
 export default function SearchSection() {
@@ -140,10 +141,10 @@ export default function SearchSection() {
             <div className="absolute top-full left-0 w-full bg-pivotaWhite shadow-lg rounded-lg max-h-60 overflow-y-auto z-10">
               {displayedResults.length > 0 ? (
                 displayedResults.map((item, index) => (
-                  <div key={index} className="py-4 px-6 border-b border-pivotaLightGray flex items-center hover:bg-pivotaAqua transition-all duration-300 ease-in-out">
-                    <img src={item.image} alt={item.title} className="w-16 h-16 rounded-full mr-4" />
+                  <div key={index} className="py-4 px-6 border-b border-pivotaLightGray flex items-center hover:bg-gray-200 transition-all duration-300 ease-in-out">
+                    <Image src={item.image ?? "/allan.jpg"} alt={item.title} width={200} height={200} className="w-16 h-16 rounded-full mr-4" />
                     <div className="flex-1">
-                      <p className="font-semibold text-pivotaNavy">{item.title}</p>
+                      <p className="font-semibold text-pivotaNavy cursor-pointer">{item.title}</p>
                       <p className="text-sm text-pivotaTeal">{item.location}</p>
                       {item.salary && <p className="text-sm text-pivotaGold">{item.salary}</p>}
                       {item.rate && <p className="text-sm text-pivotaGold">{item.rate}</p>}

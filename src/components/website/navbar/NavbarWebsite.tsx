@@ -49,7 +49,7 @@ const NavbarWebsite: React.FC = () => {
   // Redirect user to their respective dashboard
   const handleRedirect = () => {
     if (status === "authenticated") {
-      router.push(`/dashboard/user`);
+      router.push(`/dashboard`);
     }
   };
 
@@ -60,7 +60,7 @@ const NavbarWebsite: React.FC = () => {
   
 
   return (
-    <nav className="fixed top-0 w-full opacity-80 bg-pivotaTeal  text-pivotaWhite shadow-md z-10">
+    <nav className="fixed top-0 w-full bg-white  text-pivotaTeal shadow-md z-10">
 
       <div className="max-w-screen-xl mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
@@ -94,7 +94,7 @@ const NavbarWebsite: React.FC = () => {
         {status === "authenticated" ? (
           <div className="flex items-center space-x-4">
             <button
-              className="bg-pivotaGold text-white px-4 py-2 rounded-md hover:bg-pivotaAqua"
+              className="bg-pivotaGold text-black px-4 py-2 rounded-md hover:bg-pivotaAqua"
               onClick={openAdModal}
             >
               Post Ad
@@ -138,7 +138,7 @@ const NavbarWebsite: React.FC = () => {
               className="bg-pivotaGold text-black px-4 py-2 rounded-md hover:bg-orange-200"
               onClick={openAdModal}
             >
-              Post an Ad
+              Post Ad
             </button>
             <button
               onClick={() => router.push("/login") }

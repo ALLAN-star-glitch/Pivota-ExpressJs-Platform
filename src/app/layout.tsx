@@ -6,6 +6,7 @@ import "./globals.css";
 import ProviderWrapper from "@/components/common/ProviderWrapper";
 import NavbarWebsite from "@/components/website/navbar/NavbarWebsite";
 import Footer from "@/components/website/footer/Footer";
+import LayoutChecker from "@/components/common/LayoutChecker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,15 +28,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ProviderWrapper>
-        <NavbarWebsite />
-          {children}
-          <Footer/>
+        {/* Use the LayoutChecker client component for conditional rendering */}
+        <LayoutChecker>
+            {children}
+          </LayoutChecker>
           </ProviderWrapper>
 
       </body>

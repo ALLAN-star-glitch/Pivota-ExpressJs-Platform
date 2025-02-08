@@ -132,14 +132,8 @@ const onSubmit = async (data: FieldValues) => {
   return (
     <div className="relative min-h-screen">
   <div
-    className="min-h-screen py-8 overflow-y-auto inset-0 bg-cover bg-center flex justify-center items-center"
-    style={{
-      backgroundImage: "url('/signup-background.webp')",
-      backgroundSize: "cover",  // Ensures the image covers the full screen
-      backgroundPosition: "center",  // Ensures the background is centered
-    }}
-  >
-    <div className="bg-gradient-to-b from-pivotaTeal via-black to-pivotaNavy p-8 rounded-lg shadow-lg w-full max-w-6xl z-60 flex-grow mt-20">
+    className="min-h-screen py-8 overflow-y-auto inset-0 bg-cover bg-gradient-to-br from-pivotaTeal via-teal-400 to-pivotaAqua bg-center flex justify-center items-center">
+    <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-6xl z-60 flex-grow mt-20">
 
       <h2 className="text-3xl font-semibold text-center text-white mb-3">Sign Up</h2>
 
@@ -153,7 +147,7 @@ const onSubmit = async (data: FieldValues) => {
         <div className="flex items-center space-x-2 mb-4">
           <button
             onClick={handleBack}
-            className="text-white hover:bg-pivotaGold text-lg flex items-center"
+            className="text-black hover:bg-pivotaGold text-lg flex items-center"
           >
             <AiOutlineArrowLeft className="mr-2" />
             Back to Plan Selection

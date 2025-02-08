@@ -1,16 +1,19 @@
-"use client";
+"use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
-import Image from "next/image";
 import Link from "next/link";
+import { 
+  LayoutDashboard, Briefcase, Wrench, Home, User, LogOut 
+} from "lucide-react";
 
 interface MenuItem {
-  icon: string;
+  icon: React.ComponentType<any>;
   label: string;
   href?: string;
+  visible: string[];
+  subItems?: { label: string; href: string }[]; 
   action?: string;
-  visible?: string[]; // Roles allowed to see this item
 }
 
 interface MenuSection {
@@ -18,183 +21,169 @@ interface MenuSection {
   items: MenuItem[];
 }
 
-// Define menu structure
 const menuItems: MenuSection[] = [
   {
-    title: "MAIN",
+    title: "DASHBOARD",
     items: [
-      {
-        icon: "/dashboard.svg",
-        label: "Dashboard",
-        href: "/admin",
-        visible: ["superAdmin", "landlord", "employer", "user", "serviceProvider"],
-      },
+      { icon: LayoutDashboard, label: "Overview", href: "/dashboard", visible: ["superAdmin", "landlord", "employer", "user", "serviceProvider"] },
     ],
   },
   {
-    title: "USER MANAGEMENT",
+    title: "MANAGEMENT",
     items: [
-      {
-        icon: "/user.svg",
-        label: "Users",
-        href: "/admin/users",
-        visible: ["superAdmin"],
-      },
+      { icon: Briefcase, label: "My Jobs", href: "/dashboard/jobs", visible: ["employer"], subItems: [
+        { label: "Post New Job", href: "/dashboard/jobs/post" },
+        { label: "Job Applications", href: "/dashboard/jobs/applications" },
+        { label: "Active Job Listings", href: "/dashboard/jobs/active" },
+      ] },
+      { icon: Wrench, label: "My Services", href: "/dashboard/services", visible: ["serviceProvider"], subItems: [
+        { label: "Post New Service", href: "/dashboard/services/post" },
+        { label: "Service Listings", href: "/dashboard/services/listings" },
+        { label: "Service Requests", href: "/dashboard/services/requests" },
+      ] },
+      { icon: Home, label: "My Properties", href: "/dashboard/properties", visible: ["landlord"], subItems: [
+        { label: "Add New Property", href: "/dashboard/properties/add" },
+        { label: "Property Listings", href: "/dashboard/properties/listings" },
+        { label: "Property Inquiries", href: "/dashboard/properties/inquiries" },
+      ] },
     ],
   },
   {
-    title: "JOBS",
+    title: "EXPLORE",
     items: [
-      {
-        icon: "/joblistings.svg",
-        label: "Job Listings",
-        href: "/admin/job-listings",
-        visible: ["employer", "superAdmin", "user"],
-      },
-    ],
-  },
-  {
-    title: "SERVICES",
-    items: [
-      {
-        icon: "/services.svg",
-        label: "Service Listings",
-        href: "/admin/services",
-        visible: ["serviceProvider", "superAdmin", "user"],
-      },
-    ],
-  },
-  {
-    title: "RENTALS",
-    items: [
-      {
-        icon: "/properties.svg",
-        label: "Property Listings",
-        href: "/admin/properties",
-        visible: ["superAdmin", "landlord", "user"],
-      },
-      {
-        icon: "/properties-enquiries.svg",
-        label: "Tenant Inquiries",
-        href: "/admin/inquiries",
-        visible: ["superAdmin", "landlord"],
-      },
-    ],
-  },
-  {
-    title: "COMMUNICATION",
-    items: [
-      {
-        icon: "/messages.svg",
-        label: "Messages",
-        href: "/messages",
-        visible: ["superAdmin", "landlord", "employer", "user", "serviceProvider"],
-      },
+      { icon: Briefcase, label: "Bookings", href: "/dashboard/bookings", visible: ["user"] },
+      { icon: Wrench, label: "Payments", href: "/dashboard/payments", visible: ["user"] },
+      { icon: Home, label: "Job Applications", href: "/dashboard/applications", visible: ["user"] },
     ],
   },
   {
     title: "SETTINGS",
     items: [
-      {
-        icon: "/platformsettings.png",
-        label: "Platform Settings",
-        href: "/admin/settings",
-        visible: ["superAdmin"],
-      },
-      {
-        icon: "/profilesettings.svg",
-        label: "Profile Settings",
-        href: "/profile",
-        visible: ["superAdmin", "landlord", "employer", "user", "serviceProvider"],
-      },
-      {
-        icon: "/logout.svg",
-        label: "Logout",
-        action: "logout",
-        visible: ["superAdmin", "landlord", "employer", "user", "serviceProvider"],
-      },
+      { icon: User, label: "Profile Settings", href: "/dashboard/profile", visible: ["superAdmin", "landlord", "employer", "user", "serviceProvider"] },
+      { icon: LogOut, label: "Logout", action: "logout", visible: ["superAdmin", "landlord", "employer", "user", "serviceProvider"] },
     ],
   },
 ];
 
 const Menu = () => {
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const { data: session, status } = useSession();
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    return () => {
+      if (timer) clearTimeout(timer); // Clean up timeout on unmount or activeMenu change
+    };
+  }, [timer]);
 
-  // Ensure the user always has at least the "user" role
-  const userRoles: string[] = session?.user?.roles || ["user"];
+  
 
-  // Filter menu items based on user roles
+  const userRoles = session?.user?.roles || ["user"];
+  const isFreeUser = userRoles.length === 1 && userRoles.includes("user");
+
   const visibleMenuItems = menuItems.map((section) => ({
     ...section,
-    items: section.items.filter((item) =>
-      item.visible?.some((role) => userRoles.includes(role))
+    items: section.items.filter((item) => 
+      item.visible?.some((role) => userRoles.includes(role)) &&
+      (section.title === "MANAGEMENT" ? (userRoles.some((role) => ["employer", "landlord", "serviceProvider"].includes(role)) || isFreeUser) : true) &&
+      (section.title === "EXPLORE" ? isFreeUser : true)
     ),
   }));
 
+  const handleMouseEnter = (itemLabel: string) => {
+    if (timer) clearTimeout(timer); // Clear existing timeout if any
+    setActiveMenu(itemLabel); // Show submenu
+  };
+
+  const handleMouseLeave = () => {
+    const newTimer = setTimeout(() => {
+      setActiveMenu(null); // Hide submenu after delay
+    }, 200); // Adjust delay time here (200ms)
+    setTimer(newTimer);
+  };
+
   return (
-    <div className="mt-4 text-sm">
-      {visibleMenuItems.map(
-        (section) =>
-          section.items.length > 0 && (
-            <div className="flex flex-col gap-2" key={section.title}>
-              <span className="hidden lg:block font-light text-gray-300 my-4">
-                {section.title}
-              </span>
-              {section.items.map((item) =>
-                item.action === "logout" ? (
-                  <button
-                    key={item.label}
-                    onClick={() => setShowModal(true)}
-                    className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-                  >
-                    <Image src={item.icon} alt={item.label} width={25} height={25} />
-                    <span className="hidden lg:block">{item.label}</span>
-                  </button>
-                ) : item.href ? (
+    <div className="mt-4 text-sm text-pivotaNavy">
+      {visibleMenuItems.map((section) =>
+        section.items.length > 0 ? (
+          <div className="flex flex-col gap-2" key={section.title}>
+            <span className="hidden lg:block font-light text-gray-400 my-4">
+              {section.title}
+            </span>
+            {section.items.map((item) =>
+              item.action === "logout" ? (
+                <button
+                  key={item.label}
+                  onClick={() => setShowModal(true)}
+                  className="flex items-center justify-center lg:justify-start text-gray-600 gap-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  <item.icon size={20} color="#FF6F61" />
+                  <span className="hidden lg:block">{item.label}</span>
+                </button>
+              ) : item.href ? (
+                <div 
+                  key={item.label} 
+                  className="relative"
+                  onMouseEnter={() => handleMouseEnter(item.label)} 
+                  onMouseLeave={handleMouseLeave}
+                >
                   <Link
                     href={item.href}
-                    key={item.label}
-                    className="flex items-center justify-center lg:justify-start text-white gap-4 py-2 rounded-lg hover:bg-pivotaTeal transition-colors"
+                    className={`flex items-center justify-center lg:justify-start gap-4 py-2 rounded-lg transition-colors ${activeMenu === item.label ? 'bg-pivotaAqua' : 'hover:bg-pivotaAqua'}`}
                   >
-                    <Image src={item.icon} alt={item.label} width={35} height={35} />
+                    <item.icon size={20} color="#008080" />
                     <span className="hidden lg:block">{item.label}</span>
                   </Link>
-                ) : null
-              )}
-            </div>
-          )
+
+                  {item.subItems && activeMenu === item.label && (
+                    <div className="absolute left-full top-0 ml-2 w-48 bg-white shadow-lg rounded-lg z-10">
+                      {item.subItems.map((subItem, index) => (
+                        <Link
+                          key={`${item.label}-${subItem.label}-${index}`}
+                          href={subItem.href}
+                          className="block px-4 py-2 text-gray-700 hover:bg-teal-100"
+                        >
+                          {subItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : null
+            )}
+          </div>
+        ) : null
       )}
 
+
       {/* Logout Confirmation Modal */}
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
-          <div className="bg-white rounded-2xl shadow-lg p-6 max-w-sm text-center">
-            <h2 className="text-lg font-semibold text-gray-800">Confirm Logout</h2>
-            <p className="text-gray-600 mt-2">Are you sure you want to log out?</p>
-            <div className="mt-4 flex justify-center gap-4">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => signOut({ callbackUrl: "/login" })}
-                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+{showModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
+    <div className="bg-white rounded-2xl shadow-lg p-6 max-w-sm text-center">
+      <h2 className="text-lg font-semibold text-gray-800">Confirm Logout</h2>
+      <p className="text-gray-600 mt-2">Are you sure you want to log out?</p>
+      <div className="mt-4 flex justify-center gap-4">
+        <button
+          onClick={() => setShowModal(false)}
+          className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 transition"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => signOut({ callbackUrl: "/login" })}
+          className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
 
 export default Menu;
+

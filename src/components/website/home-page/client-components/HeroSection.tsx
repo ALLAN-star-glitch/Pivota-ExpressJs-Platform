@@ -64,7 +64,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <div className="relative w-full h-[650px] overflow-hidden">
+    <div className="relative w-full h-[600px] overflow-hidden">
       <motion.div
         key={currentIndex}
         className="absolute inset-0 w-full h-full"

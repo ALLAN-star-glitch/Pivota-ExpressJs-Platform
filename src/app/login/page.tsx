@@ -77,13 +77,12 @@ const SignIn = () => {
   };
 
 
-
   const onSubmit = async (values: FormData) => {
     try {
       // Log out the current session to ensure cookies are cleared
       await signOut({ redirect: false });
   
-      // Sign in with credentials after logging out
+      // Sign in with credentials
       const result = await signIn("credentials", {
         redirect: false,
         email: values.email,
@@ -98,36 +97,42 @@ const SignIn = () => {
         return;
       }
   
-      
-      if (!session?.user?.roles) {
+      // Wait for session update before accessing roles
+      const checkSession = async () => {
+        let retries = 5;
+        while (retries > 0) {
+          const updatedSession = await fetch("/api/auth/session").then((res) => res.json());
+          if (updatedSession?.user?.roles) return updatedSession;
+          await new Promise((resolve) => setTimeout(resolve, 500)); // Wait before retrying
+          retries--;
+        }
+        return null;
+      };
+  
+      const updatedSession = await checkSession();
+      if (!updatedSession || !updatedSession.user?.roles?.length) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          apiError: "Unable to determine user role.",
+          apiError: "Unable to determine user role. Please try again.",
         }));
         return;
       }
   
-      const userRoles = session.user.roles.length ? session.user.roles : ["user"];
-      const roleRoutes: { [key: string]: string } = {
-        serviceProvider: "/dashboard/service-provider",
-        employer: "/dashboard/employer",
-        landlord: "/dashboard/landlord",
-        user: "/dashboard/user",
-      };
-  
-      const firstSelectedRole = userRoles[0];
-      const dashboardRoute = roleRoutes[firstSelectedRole] || roleRoutes["user"];
-  
-      // Redirect to respective dashboard
-      router.push(`${dashboardRoute}?username=${session.user.firstName}&success=true`);
+      // Redirect to dashboard after successful login
+      router.push("/dashboard");
     } catch (error) {
-      console.error("Error details:", error); // More detailed error logging
+      console.error("Error details:", error);
       setErrors((prevErrors) => ({
         ...prevErrors,
         apiError: "An error occurred while processing your request.",
       }));
     }
   };
+  
+  
+  
+  
+  
   
 
   

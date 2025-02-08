@@ -14,7 +14,7 @@ interface NavBarDashboardClientProps {
 
 const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }) => {
   const [isAdModalOpen, setIsAdModalOpen] = useState(false); // Modal state
-  const [isDarkTheme, setIsDarkTheme] = useState(false); // Track theme
+  
 
   // Extract user role
   const userRoles: string[] = session?.user?.roles || ["user"]; // Default role is always 'user'
@@ -63,31 +63,6 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
           </button>
         )}
 
-        {/* Switch Role Button For Large Screens */}
-        {session && (
-          <div className="hidden md:flex items-center gap-2 cursor-pointer">
-            <span className="hidden md:block">Switch Role</span>
-            <Image src="/role-switch.svg" height={18} width={18} alt="role switch" />
-          </div>
-        )}
-
-        {/* Switch Role Button for small devices */}
-        <div className="block md:hidden">
-          <Image src="/role-switch.svg" height={18} width={18} alt="role switch" />
-        </div>
-
-        {/* Theme Switcher Icon */}
-        <div
-          className="flex items-center gap-2 cursor-pointer"
-          onClick={() => setIsDarkTheme(!isDarkTheme)} // Toggle theme on click
-        >
-          <span className="hidden md:block">Switch Theme</span>
-          {isDarkTheme ? (
-            <FaSun size={20} className="text-pivotaTeal" />
-          ) : (
-            <FaMoon size={20} className="text-pivotaTeal" />
-          )}
-        </div>
 
         {/* Message Icon */}
         <div className="bg-pivotaWhite rounded-full w-7 h-7 flex items-center justify-center cursor-pointer hover:bg-pivotaTeal hover:bg-opacity-10">

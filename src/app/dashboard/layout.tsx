@@ -8,49 +8,48 @@ import Link from "next/link";
 
 export default async function DashboardLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-
-  const session = await getServerSession(authOptions)
+}: Readonly<{ children: React.ReactNode }>) {
+  const session = await getServerSession(authOptions);
 
   if (!session) {
-    return(
-   <AccessDenied/>
-    )
+    return <AccessDenied />;
   }
-  
-  return (
-    <div className="min-h-screen flex">
-      {/* LEFT */}
-      <div className="w-[14%] md:w-[8%] lg:w-[16%] xl:w-[14%] bg-gradient-to-b from-pivotaNavy to-pivotaTeal h-screen flex flex-col">
-        {/* Sticky Logo Section */}
-        <div className="sticky top-0 z-10 bg-pivotaNavy p-4 shadow h-20 px-4">
-          <Link
-            href="/"
-            className="flex items-center justify-center lg:justify-start gap-2"
-          >
-            <Image src="/mylogo.png" alt="logo" width={70} height={40} />
-            <span className="hidden lg:block font-bold text-pivotaTeal">Pivota</span>
-          </Link>
-        </div>
 
-        {/* Scrollable Menu */}
-        <div className="overflow-y-auto flex-1 p-4 text-pivotaWhite">
-          <Menu />
+  const userRoles = session.user.roles || []; // Example: ['user', 'employer']
+
+  return (
+    <div className="min-h-screen flex flex-col bg-pivotaLightGray">
+      {/* TOP - Logo and NavBar Section */}
+      <div className="bg-pivotaWhite shadow-md flex justify-between items-center sticky top-0 z-20">
+        {/* Logo Section */}
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/mylogo.png" alt="logo" width={70} height={40} />
+          <span className="font-bold text-pivotaTeal text-2xl">Pivota</span>
+        </Link>
+
+        {/* NavBar Section */}
+        <div className="flex items-center space-x-6">
+          <NavBarDashboard />
         </div>
       </div>
 
-      {/* RIGHT */}
-      <div className="w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] bg-pivotaLightGray flex flex-col h-screen">
-        {/* Sticky NavBar */}
-        <div className="sticky top-0 z-10 bg-pivotaWhite shadow">
-          <NavBarDashboard/>
+      {/* BOTTOM - Left and Right Sections */}
+      <div className="flex flex-1 bg-pivotaLightGray">
+        {/* LEFT - Menu Section (Elevated, Fully Rounded, with Shadow and Spacing) */}
+        <div className="w-[18%] bg-white rounded-2xl shadow-xl h-full sticky top-[15%] mx-6 my-4 p-4 transform hover:scale-105 transition-all duration-300 ease-in-out">
+          <Menu />
         </div>
 
-        {/* Scrollable Content */}
-        <div className="overflow-y-auto flex-1 text-pivotaTeal">
-          {children}
+        {/* RIGHT - Main Content Section */}
+        <div className="w-[82%] bg-pivotaWhite flex flex-col h-full p-6 space-y-6">
+          {/* Dashboard Header Section */}
+          <div className="bg-gradient-to-r from-pivotaTeal to-pivotaAqua text-pivotaWhite rounded-lg shadow-lg p-6 mb-6">
+            <h2 className="text-3xl font-semibold capitalize">Welcome Back, {session?.user.firstName}! 👋</h2>
+            <p className="text-sm text-pivotaLightGray">Here's your dashboard overview for today..</p>
+          </div>
+
+          {/* Scrollable Content */}
+          <div className="overflow-y-auto flex-1">{children}</div>
         </div>
       </div>
     </div>
