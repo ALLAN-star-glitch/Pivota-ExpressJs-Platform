@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 interface MenuItem {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;  // Specify that icon is a component that accepts SVG props
+  icon: React.ComponentType<{ size?: number; color?: string }>; 
   label: string;
   href?: string;
   visible: string[];
@@ -73,11 +73,9 @@ const Menu = () => {
 
   useEffect(() => {
     return () => {
-      if (timer) clearTimeout(timer); // Clean up timeout on unmount or activeMenu change
+      if (timer) clearTimeout(timer);
     };
   }, [timer]);
-
-  
 
   const userRoles = session?.user?.roles || ["user"];
   const isFreeUser = userRoles.length === 1 && userRoles.includes("user");
@@ -92,15 +90,19 @@ const Menu = () => {
   }));
 
   const handleMouseEnter = (itemLabel: string) => {
-    if (timer) clearTimeout(timer); // Clear existing timeout if any
-    setActiveMenu(itemLabel); // Show submenu
+    if (timer) clearTimeout(timer);
+    setActiveMenu(itemLabel);
   };
 
   const handleMouseLeave = () => {
     const newTimer = setTimeout(() => {
-      setActiveMenu(null); // Hide submenu after delay
-    }, 200); // Adjust delay time here (200ms)
+      setActiveMenu(null);
+    }, 200);
     setTimer(newTimer);
+  };
+
+  const handleClick = (itemLabel: string) => {
+    setActiveMenu(activeMenu === itemLabel ? null : itemLabel);
   };
 
   return (
@@ -127,6 +129,7 @@ const Menu = () => {
                   className="relative"
                   onMouseEnter={() => handleMouseEnter(item.label)} 
                   onMouseLeave={handleMouseLeave}
+                  onClick={() => handleClick(item.label)}
                 >
                   <Link
                     href={item.href}
@@ -136,7 +139,7 @@ const Menu = () => {
                     <span className="hidden lg:block">{item.label}</span>
                   </Link>
 
-                  {item.subItems && activeMenu === item.label && (
+                  {item.subItems && (activeMenu === item.label || window.innerWidth <= 1024) && (
                     <div className="absolute left-full top-0 ml-2 w-48 bg-white shadow-lg rounded-lg z-10">
                       {item.subItems.map((subItem, index) => (
                         <Link
@@ -156,34 +159,31 @@ const Menu = () => {
         ) : null
       )}
 
-
       {/* Logout Confirmation Modal */}
-{showModal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
-    <div className="bg-white rounded-2xl shadow-lg p-6 max-w-sm text-center">
-      <h2 className="text-lg font-semibold text-gray-800">Confirm Logout</h2>
-      <p className="text-gray-600 mt-2">Are you sure you want to log out?</p>
-      <div className="mt-4 flex justify-center gap-4">
-        <button
-          onClick={() => setShowModal(false)}
-          className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 transition"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
-          className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
-        >
-          Logout
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
+          <div className="bg-white rounded-2xl shadow-lg p-6 max-w-sm text-center">
+            <h2 className="text-lg font-semibold text-gray-800">Confirm Logout</h2>
+            <p className="text-gray-600 mt-2">Are you sure you want to log out?</p>
+            <div className="mt-4 flex justify-center gap-4">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => signOut({ callbackUrl: "/login" })}
+                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default Menu;
-
