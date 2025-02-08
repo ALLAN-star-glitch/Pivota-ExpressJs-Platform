@@ -1,7 +1,5 @@
 import HeroSection from "@/components/website/home-page/client-components/HeroSection";
 import SearchSection from "@/components/website/home-page/client-components/SearchSection";
-import SuccessStories from "@/components/website/home-page/client-components/SuccessStories";
-import WhatWeOffer from "@/components/website/home-page/client-components/SuccessStories";
 import AvailableListings from "@/components/website/home-page/client-components/AvailableListings";
 import { Metadata } from "next";
 import HowItWorks from "@/components/website/home-page/client-components/HowItWorks";

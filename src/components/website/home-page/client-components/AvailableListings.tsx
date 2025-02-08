@@ -77,40 +77,48 @@ export default function AvailableListings() {
         ))}
       </div>
       <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-        {availableListings[activeCategory].map((item, index) => (
-          <motion.div
-            key={index}
-            className="bg-white/80 backdrop-blur-md text-pivotaNavy p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 flex flex-col items-center"
-            whileHover={{ scale: 1.05 }}
-          >
-            <Image src={(item as any).image} alt={(item as any).title} width={200} height={200} className="w-20 h-20 object-cover rounded-lg mb-3" />
-            {activeCategory === "Jobs" && (
-              <>
-                <h4 className="font-semibold text-lg sm:text-xl mb-2">{(item as JobListing).title}</h4>
-                <p className="text-sm text-gray-600">{(item as JobListing).location}</p>
-                <p className="text-sm"><strong>Salary:</strong> {(item as JobListing).salary}</p>
-                <p className="text-sm"><strong>Type:</strong> {(item as JobListing).type}</p>
-              </>
-            )}
-            {activeCategory === "Service Providers" && (
-              <>
-                <h4 className="font-semibold text-lg sm:text-xl mb-2">{(item as ServiceProviderListing).name}</h4>
-                <p className="text-sm text-gray-600"><strong>Profession:</strong> {(item as ServiceProviderListing).title}</p>
-                <p className="text-sm"><strong>Location:</strong> {(item as ServiceProviderListing).location}</p>
-                <p className="text-sm"><strong>Rate:</strong> {(item as ServiceProviderListing).rate}</p>
-                <p className="text-sm"><strong>Availability:</strong> {(item as ServiceProviderListing).availability}</p>
-              </>
-            )}
-            {activeCategory === "Housing" && (
-              <>
-                <h4 className="font-semibold text-lg sm:text-xl mb-2">{(item as HousingListing).title}</h4>
-                <p className="text-sm text-gray-600">{(item as HousingListing).location}</p>
-                <p className="text-sm"><strong>Price:</strong> {(item as HousingListing).price}</p>
-                <p className="text-sm"><strong>Type:</strong> {(item as HousingListing).type}</p>
-              </>
-            )}
-          </motion.div>
-        ))}
+        {availableListings[activeCategory].map((item, index) => {
+          return (
+            <motion.div
+              key={index}
+              className="bg-white/80 backdrop-blur-md text-pivotaNavy p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 flex flex-col items-center"
+              whileHover={{ scale: 1.05 }}
+            >
+              <Image
+                src={item.image}
+                alt={item.title}
+                width={200}
+                height={200}
+                className="w-20 h-20 object-cover rounded-lg mb-3"
+              />
+              {activeCategory === "Jobs" && (
+                <>
+                  <h4 className="font-semibold text-lg sm:text-xl mb-2">{(item as JobListing).title}</h4>
+                  <p className="text-sm text-gray-600">{(item as JobListing).location}</p>
+                  <p className="text-sm"><strong>Salary:</strong> {(item as JobListing).salary}</p>
+                  <p className="text-sm"><strong>Type:</strong> {(item as JobListing).type}</p>
+                </>
+              )}
+              {activeCategory === "Service Providers" && (
+                <>
+                  <h4 className="font-semibold text-lg sm:text-xl mb-2">{(item as ServiceProviderListing).name}</h4>
+                  <p className="text-sm text-gray-600"><strong>Profession:</strong> {(item as ServiceProviderListing).title}</p>
+                  <p className="text-sm"><strong>Location:</strong> {(item as ServiceProviderListing).location}</p>
+                  <p className="text-sm"><strong>Rate:</strong> {(item as ServiceProviderListing).rate}</p>
+                  <p className="text-sm"><strong>Availability:</strong> {(item as ServiceProviderListing).availability}</p>
+                </>
+              )}
+              {activeCategory === "Housing" && (
+                <>
+                  <h4 className="font-semibold text-lg sm:text-xl mb-2">{(item as HousingListing).title}</h4>
+                  <p className="text-sm text-gray-600">{(item as HousingListing).location}</p>
+                  <p className="text-sm"><strong>Price:</strong> {(item as HousingListing).price}</p>
+                  <p className="text-sm"><strong>Type:</strong> {(item as HousingListing).type}</p>
+                </>
+              )}
+            </motion.div>
+          );
+        })}
       </motion.div>
       <div className="flex justify-center mt-8 sm:mt-12">
         <button className="px-6 py-3 bg-pivotaTeal text-white font-semibold rounded-lg shadow-md hover:bg-pivotaNavy transition-all">View More</button>

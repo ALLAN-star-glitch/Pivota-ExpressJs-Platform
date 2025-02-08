@@ -45,7 +45,7 @@ export default async function DashboardLayout({
           {/* Dashboard Header Section */}
           <div className="bg-gradient-to-r from-pivotaTeal to-pivotaAqua text-pivotaWhite rounded-lg shadow-lg p-6 mb-6">
             <h2 className="text-3xl font-semibold capitalize">Welcome Back, {session?.user.firstName}! 👋</h2>
-            <p className="text-sm text-pivotaLightGray">Here's your dashboard overview for today..</p>
+            <p className="text-sm text-pivotaLightGray">Here&apos;s your dashboard overview for today..</p>
           </div>
 
           {/* Scrollable Content */}

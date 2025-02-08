@@ -8,11 +8,11 @@ import {
 } from "lucide-react";
 
 interface MenuItem {
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;  // Specify that icon is a component that accepts SVG props
   label: string;
   href?: string;
   visible: string[];
-  subItems?: { label: string; href: string }[]; 
+  subItems?: { label: string; href: string }[];
   action?: string;
 }
 
