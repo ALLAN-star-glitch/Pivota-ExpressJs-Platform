@@ -102,7 +102,7 @@ const Menu = () => {
   };
 
   const handleClick = (itemLabel: string) => {
-    setActiveMenu(activeMenu === itemLabel ? null : itemLabel);
+    setActiveMenu((prev) => (prev === itemLabel ? null : itemLabel));
   };
 
   return (

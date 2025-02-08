@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import { FaPlusCircle } from "react-icons/fa"; // Icon for "Post an Ad"
-import { FaMoon, FaSun } from "react-icons/fa"; // React Icons for theme switcher
-import PostAdModal from "../common/PostAdModal"; // Unauthenticated modal
-import AuthenticatedPostAdModal from "../common/AuthenticatedPostAdModal"; // Authenticated modal
+import PostAdModal from "../modals/AuthenticatedPostAdModal"; // Unauthenticated modal
 import { Session } from "next-auth";
 import Image from "next/image";
 
@@ -18,17 +16,8 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
 
   // Extract user role
   const userRoles: string[] = session?.user?.roles || ["user"]; // Default role is always 'user'
-  
-  // Determine valid user role (considering both "user" and premium roles)
-  const validRoles: ("landlord" | "employer" | "serviceProvider" | "user")[] = [
-    "landlord", 
-    "employer", 
-    "serviceProvider", 
-    "user"
-  ];
+  const isAuthenticated = !!session; // Check if user is authenticated
 
-  // Make sure roles are valid
-  const validUserRoles = userRoles.filter(role => validRoles.includes(role as "landlord" | "employer" | "serviceProvider" | "user"));
   
   return (
     <>
@@ -105,21 +94,15 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
         )}
       </div>
 
-      {/* Modal */}
-      {session ? (
-        <AuthenticatedPostAdModal
-          isOpen={isAdModalOpen}
-          onClose={() => setIsAdModalOpen(false)}
-          userRoles={validUserRoles}
-        />
-      ) : (
-        
+
+        {/* Modal */}
         <PostAdModal
-          isOpen={isAdModalOpen}
-          onClose={() => setIsAdModalOpen(false)}
-          isAuthenticated={false}
-        />
-      )}
+            isOpen={isAdModalOpen}
+            onClose={() => setIsAdModalOpen(false)}
+            isAuthenticated={isAuthenticated}
+            userRoles={userRoles}
+          />
+     
     </>
   );
 };

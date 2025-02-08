@@ -5,18 +5,21 @@ import { FaUserCircle } from "react-icons/fa";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ClientSession from "../../common/ClientSession";
-import PostAdModal from "../../common/PostAdModal";
-import AuthenticatedPostAdModal from "../../common/AuthenticatedPostAdModal";
 import Image from "next/image";
+import PostAdModal from "@/components/modals/AuthenticatedPostAdModal";
+import UnauthenticatedPostAdModal from "@/components/modals/UnauthenticatedPostAdModal";
 
 const NavbarWebsite: React.FC = () => {
   const [mounted, setMounted] = useState(false);
-  const [isAdModalOpen, setIsAdModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isAdModalOpen, setIsAdModalOpen] = useState(false);
+  const [isUnauthenticatedModalOpen, setIsUnauthenticatedModalOpen] = useState(false);
+
+
   
   
 
@@ -37,12 +40,9 @@ const NavbarWebsite: React.FC = () => {
   }, []);
 
 
-  // Ensure user roles are handled as an array
-  const userRoles: string[] = session?.user?.roles || ["user"]; // Default role is always 'user'
+ 
 
-  // Extract a valid premium role if the user has one
-  const premiumRole: "landlord" | "employer" | "serviceProvider" | null =
-    (userRoles.find(role => ["landlord", "employer", "serviceProvider"].includes(role)) as "landlord" | "employer" | "serviceProvider") || null;
+  
 
   const username = session?.user?.firstName || "";
 
@@ -53,10 +53,21 @@ const NavbarWebsite: React.FC = () => {
     }
   };
 
-  const openAdModal = () => setIsAdModalOpen(true);
+  const openAdModal = () => {
+    if (status === "authenticated") {
+      setIsAdModalOpen(true);
+    } else {
+      setIsUnauthenticatedModalOpen(true);  // Open the unauthenticated modal
+    }
+  };
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const handleLogout = () => signOut({ callbackUrl: "/login" });
 
+  const userRoles = session?.user?.roles || []; // Get user roles from session
+  const isAuthenticated = !!session; // Check if user is authenticated
+
+
+  const closeUnauthenticatedModal = () => setIsUnauthenticatedModalOpen(false);  // Close modal
   
 
   return (
@@ -99,6 +110,16 @@ const NavbarWebsite: React.FC = () => {
             >
               Post Ad
             </button>
+
+            {/* Modal */}
+
+            
+          <PostAdModal
+            isOpen={isAdModalOpen}
+            onClose={() => setIsAdModalOpen(false)}
+            isAuthenticated={isAuthenticated}
+            userRoles={userRoles}
+          />
 
             {/* Avatar & Dropdown */}
             <div className="relative" ref={dropdownRef}>
@@ -148,25 +169,18 @@ const NavbarWebsite: React.FC = () => {
               <span className="font-medium hidden md:flex">Login</span>
             </button>
           </div>
+
+          
         )}
       </div>
 
-      {/* Modals */}
-      {isAdModalOpen && (
-        session?.user ? (
-          <AuthenticatedPostAdModal
-            isOpen={isAdModalOpen}
-            onClose={() => setIsAdModalOpen(false)}
-           userRoles={userRoles}  // Pass the roles array
-          />
-        ) : (
-          <PostAdModal
-            isOpen={isAdModalOpen}
-            onClose={() => setIsAdModalOpen(false)}
-            isAuthenticated={false}
-          />
-        )
-      )}
+      {/* Unauthenticated Modal */}
+      <UnauthenticatedPostAdModal
+        isOpen={isUnauthenticatedModalOpen}
+        onClose={closeUnauthenticatedModal}
+      />
+
+      
 
       {/* Logout Confirmation Modal (Only for authenticated users) */}
       {status === "authenticated" && showLogoutModal && (
