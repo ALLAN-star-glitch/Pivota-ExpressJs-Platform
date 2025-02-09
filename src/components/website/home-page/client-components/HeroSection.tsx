@@ -59,12 +59,12 @@ export default function HeroSection() {
   };
 
   useEffect(() => {
-    const interval = setInterval(nextSlide, 8000);
+    const interval = setInterval(nextSlide, 10000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="relative w-full h-[600px] overflow-hidden">
+    <div className="relative w-full h-[700px] overflow-hidden">
       <motion.div
         key={currentIndex}
         className="absolute inset-0 w-full h-full"
