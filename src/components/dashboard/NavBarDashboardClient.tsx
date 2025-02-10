@@ -45,7 +45,7 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
         {session && (
           <button
             onClick={() => setIsAdModalOpen(true)}
-            className="flex items-center bg-pivotaTeal text-white px-4 py-2 rounded-md hover:bg-pivotaAqua hidden md:flex"
+            className="flex items-center bg-pivotaGold text-black px-4 py-2 rounded-md hover:bg-pivotaAqua hidden md:flex"
           >
             <FaPlusCircle size={20} className="mr-2" />
             Post an Ad

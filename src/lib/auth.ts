@@ -59,36 +59,44 @@ export const authOptions: NextAuthOptions = {
           firstName: existingUser.firstName,
           plan: existingUser.plan,  // Include the plan here
           roles: userRoles.map(role => role.name), // Return the roles as an array of role names
+          name: "user name",
+          image: "", // or a default image
         };
       },
     }),
   ],
-
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        // Include user data and roles in the JWT token
-        return {
-          ...token,
-          firstName: user.firstName,
-          plan: user.plan, // Include plan in the token
-          roles: user.roles, // Save roles as an array in JWT token
-        };
-      }
-      return token;
-    },
-
-    async session({ session, token }) {
-      // Include roles and plan in session
+  async jwt({ token, user }) {
+    if (user) {
       return {
-        ...session,
-        user: {
-          ...session.user,
-          firstName: token.firstName,
-          plan: token.plan,  // Include plan in session
-          roles: token.roles, // Include roles in session
-        },
+        ...token,
+        firstName: user.firstName,
+        plan: user.plan,  // Include plan in the token
+        roles: user.roles, // Save roles as an array in JWT token
+        name: user.name,  // Include user name
+        image: user.image || "", // Set default image if necessary
       };
-    },
+    }
+    return token;
   },
+
+  async session({ session, token }) {
+    // Add the necessary fields from token to session.user
+    session.user = {
+      ...session.user,
+      firstName: token.firstName as string,
+      name: token.name as string,
+      plan: token.plan as string,
+      roles: token.roles as string[],
+      image: token.image as string,
+    };
+
+    // Now return the session with all the updated fields
+    return session;
+  },
+}
+
+  
+  
+  
 };

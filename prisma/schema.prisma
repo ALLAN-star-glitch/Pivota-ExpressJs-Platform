@@ -4,31 +4,51 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url      = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model User {
-  id        String    @id @default(cuid()) // or @default(uuid())
+  id        String    @id @default(cuid())
   email     String    @unique
   firstName String
   lastName  String
-  phone     String    @unique //optional and unique
+  phone     String    @unique
   password  String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  roles     Role[]    @relation("UserRoles") // Many-to-many relationship with roles
-  isPremium Boolean   @default(false) // Add a field to track premium status (default is false)
-  plan      String    @default("free") // Default plan is 'free'  // Membership plan field (free, bronze, silver, gold)
+  roles     Role[]    @relation("UserRoles")
+  isPremium Boolean   @default(false)
+  plan      Plan      @default(free)
+  houseAds  HouseAd[] @relation("UserHouseAds") // One user -> Many house ads
+}
+
+model HouseAd {
+  id                    String   @id @default(cuid()) 
+  title                 String
+  description           String
+  location             String?  // Optional, as per your requirements
+  price                 Float
+  houseType            String   // String field for house type: "rental" or "sale"
+  numberOfBedrooms     Int?     // Optional, as per your requirements
+  numberOfBathrooms    Int?     // Optional, as per your requirements
+  houseRentalCapacity  String
+  isFurnished          Boolean? // Optional, for furnished status
+  houseCondition       String?  // Optional, for house condition (e.g., new, old)
+  images               String[] // Array of image URLs (stored as strings)
+  postedBy    User     @relation(fields: [userId], references: [id], name: "UserHouseAds") // Many ads -> One user
+  userId               String
+  isAvailable          Boolean  @default(true) // Tracks availability
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
 
 model Role {
-  id    String  @id @default(cuid()) // or @default(uuid())
-  name  String  @unique // Role name (e.g., 'user', 'service-provider', 'superAdmin', etc.)
-  users User[]  @relation("UserRoles") // Many-to-many relationship with users
+  id    String  @id @default(cuid())
+  name  String  @unique
+  users User[]  @relation("UserRoles")
 }
 
-// Enum to define the available plans
 enum Plan {
   free
   bronze

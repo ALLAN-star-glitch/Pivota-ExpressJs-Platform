@@ -13,6 +13,10 @@ const roleComponents: Record<string, React.FC> = {
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
+  
+  console.log("User name", session?.user.name)
+  console.log("Session", session)
+  console.log("Session token", session?.token)
 
   if (!session) {
     return (

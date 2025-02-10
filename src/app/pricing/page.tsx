@@ -89,7 +89,7 @@ const onSubmit = async (data: FieldValues) => {
   console.log("Payload being sent:", payload);  // Log the payload to make sure everything looks correct
 
   try {
-    const response = await axios.post("/api/user", payload);
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}`, payload); 
   
     if (response.status === 200 || response.status === 201) {
       console.log("User Plan:", payload.plan);

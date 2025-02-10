@@ -120,6 +120,7 @@ const SignIn = () => {
   
       // Redirect to dashboard after successful login
       router.push("/dashboard");
+      console.log("Token:", updatedSession?.token)
     } catch (error) {
       console.error("Error details:", error);
       setErrors((prevErrors) => ({

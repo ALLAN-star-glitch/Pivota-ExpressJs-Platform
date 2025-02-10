@@ -1,7 +1,10 @@
 import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import JoditEditor from "jodit-react";
+import dynamic from 'next/dynamic';
+const JoditEditor = dynamic(() => import('jodit-react'), { 
+  ssr: false 
+});
 
 
 
