@@ -1,14 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { z } from "zod";
 import { ToastContainer, toast } from "react-toastify";
-import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import LoadingBar from "@/components/common/LoadingBar";
+import axios from "axios";
+
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser, setLoading, setError } from '@/lib/features/auth/authslice';
+import { RootState } from "@/lib/store";
 
 
 // Define the validation schema with Zod
@@ -30,120 +34,65 @@ type FormErrors = {
   [key: string]: string;
 };
 
-const SignIn = () => {
-  const { data: session, status } = useSession();
+const Page = () => {
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoadingState] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const router = useRouter();
+  const dispatch = useDispatch();
   
-  // Effect to show API error toast
-  useEffect(() => {
-    if (errors.apiError) {
-      toast.error(errors.apiError, { position: "top-right" });
-    }
-  }, [errors.apiError]);
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoadingState(true);
 
-    // Reset errors before validation
-    setErrors({});
-    setLoading(true);
-
-    try {
-      // Parse and validate the data using the schema
-      userSchema.parse(formData);
-
-      // Call onSubmit if validation passes
-      await onSubmit(formData);
-    } catch (error) {
-      // Handle validation errors from Zod
-      if (error instanceof z.ZodError) {
-        const newErrors: FormErrors = error.errors.reduce((acc, err) => {
-          acc[err.path[0]] = err.message;
-          return acc;
-        }, {} as FormErrors);
-
-        setErrors(newErrors); // Update state with validation errors
-      }
+    // Validate form
+    const result = userSchema.safeParse(formData);
+    if (!result.success) {
+      toast.error(result.error.errors.map((err) => err.message).join("\n"));
+      setLoadingState(false);
+      return;
     }
 
-    setLoading(false); // Stop loading after validation
-  };
+        // Dispatch loading state
+        dispatch(setLoading(true));
 
-
-  const onSubmit = async (values: FormData) => {
     try {
-      // Log out the current session to ensure cookies are cleared
-      await signOut({ redirect: false });
-  
-      // Sign in with credentials
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: values.email,
-        password: values.password,
+      // Send login request
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, formData, {
+        withCredentials: true, // Ensure cookies (if JWT stored in cookies)
       });
+
+         // Dispatch the user data to the Redux store
+         dispatch(setUser({
+           user: response.data,
   
-      if (result?.error) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          apiError: result.error || "Login failed, please try again.",
-        }));
-        return;
-      }
-  
-      // Wait for session update before accessing roles
-      const checkSession = async () => {
-        let retries = 5;
-        while (retries > 0) {
-          const updatedSession = await fetch("/api/auth/session").then((res) => res.json());
-          if (updatedSession?.user?.roles) return updatedSession;
-          await new Promise((resolve) => setTimeout(resolve, 500)); // Wait before retrying
-          retries--;
-        }
-        return null;
-      };
-  
-      const updatedSession = await checkSession();
-      if (!updatedSession || !updatedSession.user?.roles?.length) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          apiError: "Unable to determine user role. Please try again.",
-        }));
-        return;
-      }
-  
-      // Redirect to dashboard after successful login
+         }));
+
+      toast.success("Login successful!");
+      
+    
+
+      // Redirect user
       router.push("/dashboard");
-      console.log("Token:", updatedSession?.token)
-    } catch (error) {
-      console.error("Error details:", error);
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        apiError: "An error occurred while processing your request.",
-      }));
+    } catch (error: any) {
+      // Dispatch error
+      dispatch(setError(error.response?.data?.message || 'Login failed. Please try again.'));
+      toast.error(error.response?.data?.message || "Login failed. Please try again.");
+    } finally {
+      setLoadingState(false);
+      dispatch(setLoading(false));
     }
   };
-  
-  
-  
-  
-  
-  
+
+    
 
   
-
-  // Handle "Go to Homepage" button click
-  const handleGoToHomepage = () => {
-    setLoading(true); // Show loading bar
-    router.push("/"); // Navigate to homepage
-  };
-
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-b from-pivotaNavy to-pivotaTeal">
       {/* Loading Bar */}
@@ -222,7 +171,6 @@ const SignIn = () => {
           {/* Sign in with Google */}
           <div
             className="flex items-center justify-center gap-2 text-sm text-gray-500 mt-4 cursor-pointer"
-            onClick={() => signIn("google")}
           >
             Sign in with Google
             <Image className="" src="/googleicon.png" width={20} height={20} alt="google icon" />
@@ -249,7 +197,6 @@ const SignIn = () => {
           <div className="mt-4 text-center">
             <button
               className="text-teal-500 font-semibold"
-              onClick={handleGoToHomepage}
               disabled={loading}
             >
               Go to Homepage
@@ -263,4 +210,8 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default Page;
+
+
+
+

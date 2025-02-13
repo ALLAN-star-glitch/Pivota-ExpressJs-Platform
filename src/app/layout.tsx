@@ -3,10 +3,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import ProviderWrapper from "@/components/common/ProviderWrapper";
-import NavbarWebsite from "@/components/website/navbar/NavbarWebsite";
-import Footer from "@/components/website/footer/Footer";
 import LayoutChecker from "@/components/common/LayoutChecker";
+import StoreProvider from "@/lib/StoreProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,13 +32,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ProviderWrapper>
+      <StoreProvider>
         {/* Use the LayoutChecker client component for conditional rendering */}
         <LayoutChecker>
             {children}
           </LayoutChecker>
-          </ProviderWrapper>
-
+      </StoreProvider>
       </body>
     </html>
   );

@@ -1,50 +1,50 @@
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
-import JobSection from "@/components/portal/jobs/JobSection";
-import PropertySection from "@/components/portal/property/PropertySection";
-import ServiceSection from "@/components/portal/service/ServiceSection";
-import ProfileSection from "@/components/portal/profile/ProfileSection";
+"use client";
 
-const roleComponents: Record<string, React.FC> = {
-  employer: JobSection,
-  landlord: PropertySection,
-  serviceProvider: ServiceSection,
-};
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation"; // Use useRouter from next/navigation in the App Router
+import dynamic from "next/dynamic";
+import { RootState } from "@/lib/store";
+import Cookies from "js-cookie"; 
+import DashboardContent from "../../components/dashboard/DashboardContent";
 
-export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+
+const Dashboard = () => {
+ 
+  const dispatch = useDispatch();
+  const router = useRouter(); // Using Next.js useRouter from next/navigation
+
+  const { isAuthenticated, userRoles } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  console.log("user roles from redux", userRoles)
+  console.log("Authenitication Status", isAuthenticated)
+
   
-  console.log("User name", session?.user.name)
-  console.log("Session", session)
-  console.log("Session token", session?.token)
+  useEffect(() => {
+    if (isAuthenticated) {
+      return; // If the user is already authenticated, don't check the token
+    }
 
-  if (!session) {
-    return (
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
-        <p>You must be logged in to access the dashboard.</p>
-      </div>
-    );
-  }
+    const token = Cookies.get("token"); // Get token from cookies
+    if (!token) {
+      // If no token exists, redirect to login
+      router.push("/login");
+      return;
+    }
+     
+  }, [dispatch, isAuthenticated, router]);
 
-  const userRoles: string[] = session.user.roles || [];
-
+  // If authenticated, show the dashboard content
   return (
-    <div className="p-6 flex flex-col lg:flex-row gap-6">
-      {/* Left Column (Wider) */}
-      <div className="lg:w-2/3 bg-white p-5">
-        {/* Dynamically render role-based sections */}
-        {userRoles.map((role) => {
-          const Component = roleComponents[role];
-          return Component ? <Component key={role} /> : null;
-        })}
-
-        {/* Profile section (Visible to all users) */}
-        <ProfileSection />
-      </div>
-
-      {/* Right Column (Black Background) */}
-      <div className="lg:w-1/3 bg-pivotaTeal min-h-screen"></div>
+    <div className="p-6 space-y-6">
+      <DashboardContent
+        dispatch={dispatch}
+        userRoles={userRoles}
+      />
     </div>
   );
-}
+};
+
+export default Dashboard;

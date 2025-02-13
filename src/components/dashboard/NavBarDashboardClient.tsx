@@ -1,22 +1,14 @@
 "use client"
 
-import { useState } from "react";
 import { FaPlusCircle } from "react-icons/fa"; // Icon for "Post an Ad"
 import PostAdModal from "../modals/AuthenticatedPostAdModal"; // Unauthenticated modal
-import { Session } from "next-auth";
 import Image from "next/image";
 
-interface NavBarDashboardClientProps {
-  session: Session | null;
-}
 
-const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }) => {
-  const [isAdModalOpen, setIsAdModalOpen] = useState(false); // Modal state
+const NavBarDashboardClient =()=>{
   
 
-  // Extract user role
-  const userRoles: string[] = session?.user?.roles || ["user"]; // Default role is always 'user'
-  const isAuthenticated = !!session; // Check if user is authenticated
+
 
   
   return (
@@ -42,9 +34,9 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
       {/* ICONS AND USER */}
       <div className="flex items-center gap-6 justify-end w-full">
         {/* Post an Ad Button */}
-        {session && (
+        {(
           <button
-            onClick={() => setIsAdModalOpen(true)}
+      
             className="flex items-center bg-pivotaGold text-black px-4 py-2 rounded-md hover:bg-pivotaAqua hidden md:flex"
           >
             <FaPlusCircle size={20} className="mr-2" />
@@ -68,8 +60,8 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
 
         {/* User Info */}
         <div className="hidden md:flex flex-col ">
-          <span className="text-sm leading-3 font-medium text-pivotaTeal capitalize">{session?.user.firstName}</span>
-          <span className="text-[12px] text-pivotaTeal text-right">{session?.user.plan} Plan</span>
+          <span className="text-sm leading-3 font-medium text-pivotaTeal capitalize">name</span>
+          <span className="text-[12px] text-pivotaTeal text-right">Plan</span>
         </div>
 
         {/* Avatar */}
@@ -78,14 +70,13 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
         </div>
 
         {/* Floating Action Button for small screens */}
-        {session && (
+        {(
           <div className="fixed bottom-20 right-10 md:hidden flex items-center justify-center space-x-2 z-50">
             {/* Text next to the FAB */}
             <span className="text-pivotaTeal font-medium text-sm">Post Ad</span>
 
             {/* FAB with pulsating animation */}
             <button
-              onClick={() => setIsAdModalOpen(true)}
               className="bg-pivotaTeal text-white p-4 rounded-full shadow-lg hover:bg-pivotaAqua pulsate"
             >
               <FaPlusCircle size={30} />
@@ -95,13 +86,7 @@ const NavBarDashboardClient: React.FC<NavBarDashboardClientProps> = ({ session }
       </div>
 
 
-        {/* Modal */}
-        <PostAdModal
-            isOpen={isAdModalOpen}
-            onClose={() => setIsAdModalOpen(false)}
-            isAuthenticated={isAuthenticated}
-            userRoles={userRoles}
-          />
+        
      
     </>
   );
