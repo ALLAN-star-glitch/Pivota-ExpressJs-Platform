@@ -11,8 +11,8 @@ import Cookies from "js-cookie";
 
 interface DashboardContentProps {
   dispatch: Dispatch;
-  firstName: String;
-  userRoles: String[];
+  firstName: string;
+  userRoles: string[];
 }
 
 const DashboardContent = ({ dispatch, userRoles, firstName }: DashboardContentProps) => {

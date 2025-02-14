@@ -1,25 +1,25 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface User {
-  id: String;
-  firstName: String;
-  lastName: String;
-  phone: String;
-  plan: String;
-  roles: String[];
+  id: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  plan: string;
+  roles: string[];
 }
 
 interface AuthState {
   isAuthenticated: boolean;
-  userRoles: String[];
+  userRoles: string[];
   user: User | null;
   loading: boolean;
   error: String | null;
-  firstName: String;
-  lastName: String;
-  plan: String;
-  id: String;
-  phone: String;
+  firstName: string;
+  lastName: string;
+  plan: string;
+  id: string;
+  phone: string;
 }
 
 const initialState: AuthState = {

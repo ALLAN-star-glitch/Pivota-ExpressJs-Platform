@@ -4,8 +4,8 @@ import { FaPlusCircle } from "react-icons/fa"; // Icon for "Post an Ad"
 import Image from "next/image";
 
 interface NavbarCrops{
-  firstName: String,
-  plan: String,
+  firstName: string,
+  plan: string,
 }
 
 
