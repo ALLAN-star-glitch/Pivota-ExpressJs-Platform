@@ -50,45 +50,42 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoadingState(true);
-
-    // Validate form
+    dispatch(setLoading(true));
+  
     const result = userSchema.safeParse(formData);
     if (!result.success) {
       toast.error(result.error.errors.map((err) => err.message).join("\n"));
       setLoadingState(false);
       return;
     }
-
-        // Dispatch loading state
-        dispatch(setLoading(true));
-
-    try {
-      // Send login request
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, formData, {
-        withCredentials: true, // Ensure cookies (if JWT stored in cookies)
-      });
-
-         // Dispatch the user data to the Redux store
-         dispatch(setUser({
-           user: response.data,
   
-         }));
-
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, formData, {
+        withCredentials: true, // Ensure cookies are included
+      });
+  
+      console.log("Login Response:", response);
+  
+      if (response.data) {
+        console.log("Received Access Token:", response.data.access_token);
+        console.log("Received Refresh Token:", response.data.refresh_token);
+      }
+  
+      dispatch(setUser({
+        user: response.data,
+      }));
+  
       toast.success("Login successful!");
-      
-    
-
-      // Redirect user
       router.push("/dashboard");
     } catch (error: any) {
-      // Dispatch error
-      dispatch(setError(error.response?.data?.message || 'Login failed. Please try again.'));
+      console.error("Login Error:", error);
       toast.error(error.response?.data?.message || "Login failed. Please try again.");
     } finally {
       setLoadingState(false);
       dispatch(setLoading(false));
     }
   };
+  
 
     
 

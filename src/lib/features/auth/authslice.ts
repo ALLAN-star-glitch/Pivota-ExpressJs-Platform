@@ -1,28 +1,38 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  plan: string;
-  roles: string[];
+  id: String;
+  firstName: String;
+  lastName: String;
+  phone: String;
+  plan: String;
+  roles: String[];
 }
 
 interface AuthState {
   isAuthenticated: boolean;
-  userRoles: string[];
+  userRoles: String[];
   user: User | null;
   loading: boolean;
-  error: string | null;
+  error: String | null;
+  firstName: String;
+  lastName: String;
+  plan: String;
+  id: String;
+  phone: String;
 }
 
 const initialState: AuthState = {
   isAuthenticated: false,
-  userRoles: ['user'],
+  userRoles: [],
   user: null,
   loading: false,
   error: null,
+  firstName: "",
+  lastName: "",
+  plan: "",
+  id: "",
+  phone: ""
 };
 
 const authSlice = createSlice({
@@ -37,12 +47,18 @@ const authSlice = createSlice({
     },
     setUser: (state, action: PayloadAction<{ user: User }>) => {
       state.isAuthenticated = true;
-      state.userRoles = ['user', ...action.payload.user.roles]; 
+      state.userRoles = action.payload.user.roles; 
+      state.firstName = action.payload.user.firstName;
+      state.lastName = action.payload.user.lastName;
+      state.plan = action.payload.user.plan;
+      state.phone = action.payload.user.phone
+      state.id = action.payload.user.id;
       state.user = action.payload.user;
+
     },
     logout: (state) => {
       state.isAuthenticated = false;
-      state.userRoles = ['user'];
+      state.userRoles = [];
       state.user = null;
     },
   },

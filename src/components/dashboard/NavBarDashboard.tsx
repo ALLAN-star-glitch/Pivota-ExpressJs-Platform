@@ -1,14 +1,21 @@
-import { getServerSession } from "next-auth";
-import Image from "next/image";
+import { useSelector } from "react-redux";
 import NavBarDashboardClient from "./NavBarDashboardClient"; // New client-side component
+import { RootState } from "@/lib/store";
 
-const NavBarDashboard = async () => {
+const NavBarDashboard = () => {
+
+  const{firstName, plan} = useSelector(
+    (state: RootState) => state.auth
+  )
+
+  console.log("Plan from Redux Store", plan)
   
+ 
 
   return (
     <div className="flex justify-between items-center py-4 pr-3 h-20 px-4 bg-pivotaWhite">
       {/* Pass session to the client-side component */}
-      <NavBarDashboardClient/>
+      <NavBarDashboardClient firstName={firstName} plan={plan} />
     </div>
   );
 };

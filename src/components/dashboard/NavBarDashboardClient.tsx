@@ -1,35 +1,21 @@
 "use client"
 
 import { FaPlusCircle } from "react-icons/fa"; // Icon for "Post an Ad"
-import PostAdModal from "../modals/AuthenticatedPostAdModal"; // Unauthenticated modal
 import Image from "next/image";
 
+interface NavbarCrops{
+  firstName: String,
+  plan: String,
+}
 
-const NavBarDashboardClient =()=>{
+
+const NavBarDashboardClient =({firstName, plan}: NavbarCrops)=>{
   
-
-
 
   
   return (
     <>
-      {/* SEARCH BAR (Small screens only show icon, larger screens show input and icon) */}
-      <div className="flex items-center gap-2 ml-3">
-        {/* On small screens, show only the icon */}
-        <div className="block md:hidden">
-          <Image src="/search.png" height={18} width={18} alt="search" />
-        </div>
-
-        {/* On larger screens, show both the input and icon */}
-        <div className="hidden md:flex items-center gap-2 text-xs rounded-full ring-[1.5px] ring-pivotaTeal px-2">
-          <Image src="/search.png" height={14} width={14} alt="search" />
-          <input
-            type="text"
-            placeholder="search..."
-            className="w-[200px] p-2 bg-transparent outline-none text-pivotaTeal"
-          />
-        </div>
-      </div>
+      
 
       {/* ICONS AND USER */}
       <div className="flex items-center gap-6 justify-end w-full">
@@ -60,8 +46,8 @@ const NavBarDashboardClient =()=>{
 
         {/* User Info */}
         <div className="hidden md:flex flex-col ">
-          <span className="text-sm leading-3 font-medium text-pivotaTeal capitalize">name</span>
-          <span className="text-[12px] text-pivotaTeal text-right">Plan</span>
+          <span className="text-sm leading-3 font-medium text-pivotaTeal capitalize">{firstName}</span>
+          <span className="text-[12px] text-pivotaTeal text-right">{plan}</span>
         </div>
 
         {/* Avatar */}
