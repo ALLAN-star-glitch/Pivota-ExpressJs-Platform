@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaUserCircle, FaRegHeart, FaShoppingCart } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import ClientSession from "../../common/ClientSession";
 import Image from "next/image";
 import PostAdModal from "@/components/modals/AuthenticatedPostAdModal";
 import UnauthenticatedPostAdModal from "@/components/modals/UnauthenticatedPostAdModal";
