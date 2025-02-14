@@ -14,7 +14,7 @@ interface AuthState {
   userRoles: string[];
   user: User | null;
   loading: boolean;
-  error: String | null;
+  error: string | null;
   firstName: string;
   lastName: string;
   plan: string;

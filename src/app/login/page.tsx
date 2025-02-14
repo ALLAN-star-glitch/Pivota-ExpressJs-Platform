@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import Link from "next/link";
 import Image from "next/image";
 import LoadingBar from "@/components/common/LoadingBar";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser, setLoading, setError } from '@/lib/features/auth/authslice';
@@ -77,17 +77,18 @@ const Page = () => {
   
       toast.success("Login successful!");
       router.push("/dashboard");
-    } catch (error: any) {
-      console.error("Login Error:", error);
-      toast.error(error.response?.data?.message || "Login failed. Please try again.");
-    } finally {
-      setLoadingState(false);
-      dispatch(setLoading(false));
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.error("Login Error:", error);
+        toast.error(error.response?.data?.message || "Login failed. Please try again.");
+      } else {
+        console.error("Unknown error:", error);
+        toast.error("An unexpected error occurred.");
+      }
     }
-  };
+};
   
-
-    
+   
 
   
   return (
