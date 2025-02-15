@@ -1,5 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+
+export interface ApiError {
+    status: number;
+    data?: { message?: string };
+  }
+  
 // Define the base API slice
 export const api = createApi({
   reducerPath: "api", // This is the key under which the API slice will be stored in Redux

@@ -10,7 +10,7 @@ import Image from "next/image";
 import LoadingBar from "@/components/common/LoadingBar";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/lib/features/auth/authslice";
-import { useLoginUserMutation } from "@/lib/features/api/apiSlice";
+import { ApiError, useLoginUserMutation } from "@/lib/features/api/apiSlice";
 
 
 // Define the validation schema with Zod
@@ -61,9 +61,10 @@ const Page = () => {
 
     toast.success("Login successful!");
     router.push("/dashboard");
-  } catch (error: any) {
-    console.error("Login Error:", error); // Log error details
-    toast.error(error?.data?.message || "Login failed. Please try again.");
+  } catch (error: unknown) {
+    const apiError = error as ApiError;
+    console.error("Login Error:", apiError);
+    toast.error(apiError?.data?.message || "Login failed. Please try again.");
   }
 };
 
