@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,103 +8,73 @@ import { ToastContainer, toast } from "react-toastify";
 import Link from "next/link";
 import Image from "next/image";
 import LoadingBar from "@/components/common/LoadingBar";
-import axios, { AxiosError } from "axios";
-
-import { useDispatch, useSelector } from 'react-redux';
-import { setUser, setLoading, setError } from '@/lib/features/auth/authslice';
-import { RootState } from "@/lib/store";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/lib/features/auth/authslice";
+import { useLoginUserMutation } from "@/lib/features/api/apiSlice";
 
 
 // Define the validation schema with Zod
 const userSchema = z.object({
-  email: z.string().min(1, { message: "Email is required" }),
+  email: z.string().email({ message: "Invalid email format" }).min(1, { message: "Email is required" }),
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters" })
     .regex(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/, {
-      message:
-        "Password must include 1 uppercase letter, 1 number, and 1 special character",
+      message: "Password must include 1 uppercase letter, 1 number, and 1 special character",
     }),
 });
 
 // Infer the type for the form data
 type FormData = z.infer<typeof userSchema>;
 
-type FormErrors = {
-  [key: string]: string;
-};
-
 const Page = () => {
-  const [formData, setFormData] = useState<FormData>({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState<FormData>({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoadingState] = useState(false);
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  
   const router = useRouter();
   const dispatch = useDispatch();
-  
-  
+  const [loginUser, { isLoading }] = useLoginUserMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoadingState(true);
-    dispatch(setLoading(true));
-  
-    const result = userSchema.safeParse(formData);
-    if (!result.success) {
-      toast.error(result.error.errors.map((err) => err.message).join("\n"));
-      setLoadingState(false);
+  e.preventDefault();
+
+  const result = userSchema.safeParse(formData);
+  if (!result.success) {
+    toast.error(result.error.errors.map((err) => err.message).join("\n"));
+    return;
+  }
+
+  try {
+    const response = await loginUser(formData).unwrap();  
+
+    console.log("Login Response:", response);  // ✅ Log entire response
+    console.log("User:", response?.user); // ✅ Log user specifically
+
+    if (!response || !response.user) {
+      console.error("User data is missing in response:", response);
+      toast.error("Login failed: User data is missing.");
       return;
     }
-  
-    try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, formData, {
-        withCredentials: true, // Ensure cookies are included
-      });
-  
-      console.log("Login Response:", response);
-  
-      if (response.data) {
-        console.log("Received Access Token:", response.data.access_token);
-        console.log("Received Refresh Token:", response.data.refresh_token);
-      }
-  
-      dispatch(setUser({
-        user: response.data,
-      }));
-  
-      toast.success("Login successful!");
-      router.push("/dashboard");
-    } catch (error: unknown) {
-      if (error instanceof AxiosError) {
-        console.error("Login Error:", error);
-        toast.error(error.response?.data?.message || "Login failed. Please try again.");
-      } else {
-        console.error("Unknown error:", error);
-        toast.error("An unexpected error occurred.");
-      }
-    }
-};
-  
-   
 
-  
+    dispatch(setUser({ user: response.user }));
+
+    toast.success("Login successful!");
+    router.push("/dashboard");
+  } catch (error: any) {
+    console.error("Login Error:", error); // Log error details
+    toast.error(error?.data?.message || "Login failed. Please try again.");
+  }
+};
+
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-b from-pivotaNavy to-pivotaTeal">
-      {/* Loading Bar */}
-      {loading && <LoadingBar />}
+      {isLoading && <LoadingBar />}
 
       {/* LEFT - Image */}
       <div className="w-full md:w-1/2 h-1/2 md:h-screen bg-cover bg-center relative">
-        <Image
-          src="/login-image.webp"
-          alt="Sign In"
-          layout="fill"
-          objectFit="cover"
-          className="absolute inset-0 hidden md:block"
-        />
+        <Image src="/login-image.webp" alt="Sign In" layout="fill" objectFit="cover" className="absolute inset-0 hidden md:block" />
       </div>
 
       {/* RIGHT - Form */}
@@ -114,9 +84,7 @@ const Page = () => {
 
           {/* Email */}
           <div className="mb-4 flex items-center">
-            <label htmlFor="email" className="w-1/3 text-sm text-gray-700 font-medium cursor-pointer">
-              Email
-            </label>
+            <label htmlFor="email" className="w-1/3 text-sm text-gray-700 font-medium cursor-pointer">Email</label>
             <input
               type="email"
               id="email"
@@ -127,14 +95,11 @@ const Page = () => {
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
             />
-            {errors.email && <p className="text-red-500 text-xs mt-2">{errors.email}</p>}
           </div>
 
           {/* Password */}
           <div className="mb-4 flex items-center">
-            <label htmlFor="password" className="w-1/3 text-sm text-gray-700 font-medium cursor-pointer">
-              Password
-            </label>
+            <label htmlFor="password" className="w-1/3 text-sm text-gray-700 font-medium cursor-pointer">Password</label>
             <div className="relative w-2/3">
               <input
                 type={showPassword ? "text" : "password"}
@@ -146,59 +111,27 @@ const Page = () => {
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
               />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                onClick={() => setShowPassword(!showPassword)}
-              >
+              <button type="button" className="absolute right-3 top-1/2 transform -translate-y-1/2" onClick={() => setShowPassword(!showPassword)}>
                 {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
               </button>
             </div>
           </div>
-          {errors.password && <p className="text-red-500 text-xs mb-2">{errors.password}</p>}
 
           {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-teal-500 hover:bg-teal-600 text-white py-3 rounded-lg font-semibold"
-            disabled={loading}
-          >
-            {loading ? "Signing In..." : "Sign In"}
+          <button type="submit" className="w-full bg-teal-500 hover:bg-teal-600 text-white py-3 rounded-lg font-semibold" disabled={isLoading}>
+            {isLoading ? "Signing In..." : "Sign In"}
           </button>
-
-          {/* Sign in with Google */}
-          <div
-            className="flex items-center justify-center gap-2 text-sm text-gray-500 mt-4 cursor-pointer"
-          >
-            Sign in with Google
-            <Image className="" src="/googleicon.png" width={20} height={20} alt="google icon" />
-          </div>
 
           {/* Forgot Password Link */}
           <div className="mt-4 text-center text-sm">
-            <Link href="/forgot-password" className="text-teal-500 font-semibold">
-              Forgot Password?
-            </Link>
+            <Link href="/forgot-password" className="text-teal-500 font-semibold">Forgot Password?</Link>
           </div>
 
           {/* Sign Up Link */}
           <div className="mt-4 text-center text-sm">
             <p className="text-gray-600">
-              Don&apos;t have an account? Visit Our{" "}
-              <Link href="/pricing" className="text-teal-500 font-semibold">
-                Pricing Page to sign up
-              </Link>
+              Don&apos;t have an account? Visit Our <Link href="/pricing" className="text-teal-500 font-semibold">Pricing Page to sign up</Link>
             </p>
-          </div>
-
-          {/* Go to Homepage Button */}
-          <div className="mt-4 text-center">
-            <button
-              className="text-teal-500 font-semibold"
-              disabled={loading}
-            >
-              Go to Homepage
-            </button>
           </div>
         </form>
       </div>
@@ -209,7 +142,3 @@ const Page = () => {
 };
 
 export default Page;
-
-
-
-
