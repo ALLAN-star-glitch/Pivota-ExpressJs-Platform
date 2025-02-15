@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { logout } from '@/lib/features/auth/authslice';
 import { Dispatch } from '@reduxjs/toolkit';
-import Cookies from "js-cookie";
+
 
 interface DashboardContentProps {
   dispatch: Dispatch;
@@ -19,10 +19,7 @@ const DashboardContent = ({ dispatch, userRoles, firstName }: DashboardContentPr
   const router = useRouter();
 
   const handleLogout = () => {
-    // Remove the tokens from cookies
-    Cookies.remove('access_token');
-    Cookies.remove('refresh_token');
-  
+      
     // Dispatch logout action to clear Redux state
     dispatch(logout());
   

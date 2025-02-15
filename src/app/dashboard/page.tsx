@@ -9,11 +9,12 @@ import NavBarDashboard from "@/components/dashboard/NavBarDashboard";
 import Image from "next/image";
 import Link from "next/link";
 import { logout } from "@/lib/features/auth/authslice";
+import Menu from "@/components/common/Menu";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { plan, userRoles, firstName, lastName, id, phone, user, isAuthenticated } = useSelector(
+  const {userRoles, firstName,isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
   const [loading, setLoading] = useState(true); // Track loading state
@@ -42,7 +43,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen flex flex-col bg-pivotaLightGray">
       {/* TOP - Navbar */}
-      <div className="bg-pivotaWhite shadow-md flex justify-between items-center sticky top-0 z-50 w-full">
+      <div className="bg-pivotaWhite shadow-md flex justify-between items-center z-50 w-full">
         <div className="flex items-center gap-4 md:w-[50%]">
           <Link href="/" className="flex items-center gap-2">
             <Image src="/mylogo.png" alt="logo" width={70} height={40} />
@@ -57,8 +58,8 @@ const Dashboard = () => {
       {/* BOTTOM - Sidebar + Main Content */}
       <div className="flex flex-1 bg-pivotaLightGray">
         {/* LEFT - Sidebar */}
-        <div className="w-[18%] bg-white rounded-2xl shadow-xl h-full sticky top-[15%] mx-6 my-4 p-4">
-          {/* Sidebar content here */}
+        <div className="w-[18%] bg-white rounded-2xl shadow-xl h-full sticky top-[15%] mx-6 my-4 p-4 z-50">
+          <Menu/>
         </div>
 
         {/* RIGHT - Main Content */}

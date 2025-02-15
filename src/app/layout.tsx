@@ -6,6 +6,8 @@ import "./globals.css";
 import LayoutChecker from "@/components/common/LayoutChecker";
 import StoreProvider from "@/lib/StoreProvider";
 
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,8 +39,12 @@ export default function RootLayout({
         <LayoutChecker>
             {children}
           </LayoutChecker>
+
+       
+
       </StoreProvider>
       </body>
+
     </html>
   );
 }
