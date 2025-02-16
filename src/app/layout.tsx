@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import LayoutChecker from "@/components/common/LayoutChecker";
 import StoreProvider from "@/lib/StoreProvider";
+import Provider from "@/components/common/Provider";
 
 
 
@@ -34,7 +35,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+         <Provider>
       <StoreProvider>
+       
         {/* Use the LayoutChecker client component for conditional rendering */}
         <LayoutChecker>
             {children}
@@ -43,6 +46,8 @@ export default function RootLayout({
        
 
       </StoreProvider>
+
+      </Provider>
       </body>
 
     </html>

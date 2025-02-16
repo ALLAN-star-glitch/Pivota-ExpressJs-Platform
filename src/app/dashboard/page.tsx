@@ -1,44 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/lib/store";
 import DashboardContent from "../../components/dashboard/DashboardContent";
 import NavBarDashboard from "@/components/dashboard/NavBarDashboard";
 import Image from "next/image";
 import Link from "next/link";
-import { logout } from "@/lib/features/auth/authslice";
+
 import Menu from "@/components/common/Menu";
 
 const Dashboard = () => {
-  const dispatch = useDispatch();
-  const router = useRouter();
-  const {userRoles, firstName,isAuthenticated } = useSelector(
-    (state: RootState) => state.auth
-  );
-  const [loading, setLoading] = useState(true); // Track loading state
+  
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      console.log("User is not authenticated, redirecting to login...");
-      dispatch(logout());
-      router.push("/login");
-      return;
-    }
-
-    // If the user is authenticated, we proceed and set loading to false
-    setLoading(false);
-  }, [isAuthenticated, dispatch, router]);
-
-  // Prevent rendering dashboard content while checking authentication
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen text-gray-500">
-        Checking authentication...
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col bg-pivotaLightGray">
@@ -64,7 +35,7 @@ const Dashboard = () => {
 
         {/* RIGHT - Main Content */}
         <div className="w-[82%] bg-pivotaWhite flex flex-col h-full p-6 space-y-6">
-          <DashboardContent dispatch={dispatch} userRoles={userRoles} firstName={firstName} />
+          <DashboardContent/>
         </div>
       </div>
     </div>

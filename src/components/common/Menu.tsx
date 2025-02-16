@@ -5,10 +5,9 @@ import Link from "next/link";
 import { 
   LayoutDashboard, Briefcase, Wrench, Home, User, LogOut 
 } from "lucide-react";
-import { RootState } from "@/lib/store";
-import { useDispatch, UseDispatch, useSelector } from "react-redux";
-import { logout } from "@/lib/features/auth/authslice";
+import { useDispatch} from "react-redux";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface MenuItem {
   icon: React.ComponentType<{ size?: number; color?: string }>; 
@@ -77,8 +76,6 @@ const Menu = () => {
 
   const handleLogout = ()=>{
 
-    dispatch(logout());
-
     router.push('/login');
   }
 
@@ -88,9 +85,8 @@ const Menu = () => {
     };
   }, [timer]);
 
-  const { userRoles } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { data: session } = useSession(); // Get session data using useSession hook
+  const userRoles = session?.user?.roles || []; // Extract roles from the session (ensure your backend sets them)
   
   const isFreeUser = userRoles.length === 1 && userRoles.includes("user");
 

@@ -5,31 +5,37 @@ import { FaHome, FaClipboardList, FaMoneyBillWave, FaBell, FaUsers, FaCalendarAl
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
-import { logout } from '@/lib/features/auth/authslice';
-import { Dispatch } from '@reduxjs/toolkit';
+import { useSession, signOut } from 'next-auth/react';
+import { useEffect } from 'react';
 
-
-interface DashboardContentProps {
-  dispatch: Dispatch;
-  firstName: string;
-  userRoles: string[];
-}
-
-const DashboardContent = ({ dispatch, userRoles, firstName }: DashboardContentProps) => {
+const DashboardContent = () => {
   const router = useRouter();
 
-  const handleLogout = () => {
-      
-    // Dispatch logout action to clear Redux state
-    dispatch(logout());
+  // Get session data from NextAuth
+  const { data: session } = useSession();
   
-    // Redirect to login page
-    router.push('/login');
+  // Redirect to login page if user is not logged in (useEffect is used to handle side effects like navigation)
+  useEffect(() => {
+    if (!session) {
+      router.push('/login');
+    }
+  }, [session, router]); // Dependency array ensures this runs when session changes
+
+  if (!session) {
+    // Return null to avoid rendering the dashboard if not authenticated
+    return null;
+  }
+
+  const { user } = session;
+
+  const handleLogout = () => {
+    // Sign out the user using next-auth
+    signOut();
   };
 
-  const hasLandlordRole = userRoles.includes('landlord');
-  const hasEmployerRole = userRoles.includes('employer');
-  const hasServiceProviderRole = userRoles.includes('serviceProvider');
+  const hasLandlordRole = user?.roles?.includes('landlord');
+  const hasEmployerRole = user?.roles?.includes('employer');
+  const hasServiceProviderRole = user?.roles?.includes('serviceProvider');
 
   return (
     <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 bg-pivotaLightGray min-h-screen">
@@ -46,7 +52,7 @@ const DashboardContent = ({ dispatch, userRoles, firstName }: DashboardContentPr
         {/* Welcome Section */}
         <Card className="shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl">
           <CardHeader>
-            <CardTitle className="text-pivotaPurple">Welcome, {firstName}!</CardTitle>
+            <CardTitle className="text-pivotaPurple">Welcome, {user?.firstName}!</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-gray-700">Manage your activities based on your roles.</p>

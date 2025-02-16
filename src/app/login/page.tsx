@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { z } from "zod";
@@ -9,8 +9,10 @@ import Link from "next/link";
 import Image from "next/image";
 import LoadingBar from "@/components/common/LoadingBar";
 import { useDispatch } from "react-redux";
-import { setUser } from "@/lib/features/auth/authslice";
+
 import { ApiError, useLoginUserMutation } from "@/lib/features/api/apiSlice";
+
+import { useSession, signIn } from "next-auth/react";
 
 
 // Define the validation schema with Zod
@@ -36,7 +38,21 @@ const Page = () => {
   const dispatch = useDispatch();
   const [loginUser, { isLoading }] = useLoginUserMutation();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+
+  // Use session hook to check session status
+  const { data: session, status } = useSession();
+  
+  useEffect(() => {
+    if (session) {
+      // If session is available, navigate to dashboard
+      router.push("/dashboard");
+    }
+  }, [session, router]);
+
+  
+
+// Inside handleSubmit, after login success:
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
   const result = userSchema.safeParse(formData);
@@ -48,16 +64,12 @@ const Page = () => {
   try {
     const response = await loginUser(formData).unwrap();  
 
-    console.log("Login Response:", response);  // ✅ Log entire response
-    console.log("User:", response?.user); // ✅ Log user specifically
-
-    if (!response || !response.user) {
-      console.error("User data is missing in response:", response);
-      toast.error("Login failed: User data is missing.");
-      return;
-    }
-
-    dispatch(setUser({ user: response.user }));
+    // Handle session update
+    signIn("credentials", {
+      email: formData.email,
+      password: formData.password,
+      redirect: false, // Prevent redirect after sign-in, handle manually
+    });
 
     toast.success("Login successful!");
     router.push("/dashboard");
@@ -68,10 +80,12 @@ const Page = () => {
   }
 };
 
+  
+
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-b from-pivotaNavy to-pivotaTeal">
-      {isLoading && <LoadingBar />}
+      {isLoading && <LoadingBar isLoading={false} />}
 
       {/* LEFT - Image */}
       <div className="w-full md:w-1/2 h-1/2 md:h-screen bg-cover bg-center relative">
