@@ -8,6 +8,7 @@ import {
 import { useDispatch} from "react-redux";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useAppSelector } from "@/lib/hooks";
 
 interface MenuItem {
   icon: React.ComponentType<{ size?: number; color?: string }>; 
@@ -85,9 +86,11 @@ const Menu = () => {
     };
   }, [timer]);
 
-  const { data: session } = useSession(); // Get session data using useSession hook
-  const userRoles = session?.user?.roles || []; // Extract roles from the session (ensure your backend sets them)
-  
+
+   // Get user data from Redux store using useAppSelector
+    const userRoles = useAppSelector((state) => state.auth.user?.roles || []);
+    const firstName = useAppSelector((state) => state.auth.user?.firstName || "User");
+    
   const isFreeUser = userRoles.length === 1 && userRoles.includes("user");
 
   const visibleMenuItems = menuItems.map((section) => ({

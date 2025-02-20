@@ -8,11 +8,12 @@ import { ToastContainer, toast } from "react-toastify";
 import Link from "next/link";
 import Image from "next/image";
 import LoadingBar from "@/components/common/LoadingBar";
+
+
+
 import { useDispatch } from "react-redux";
-
-import { ApiError, useLoginUserMutation } from "@/lib/features/api/apiSlice";
-
-import { useSession, signIn } from "next-auth/react";
+import { useLoginUserMutation } from "@/lib/features/api/apiSlice";
+import { setUser } from "@/lib/features/auth/authslice";
 
 
 // Define the validation schema with Zod
@@ -35,52 +36,48 @@ const Page = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   
   const router = useRouter();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+
   const dispatch = useDispatch();
-  const [loginUser, { isLoading }] = useLoginUserMutation();
-
-
-  // Use session hook to check session status
-  const { data: session, status } = useSession();
   
+  // ✅ RTK Query mutation for login
+  const [loginUser, { isLoading: loginLoading }] = useLoginUserMutation();
+
   useEffect(() => {
-    if (session) {
-      // If session is available, navigate to dashboard
-      router.push("/dashboard");
+    if (typeof window !== "undefined" && localStorage.getItem("authState")) {
+      router.push("/dashboard"); // Redirect if user is already authenticated
     }
-  }, [session, router]);
+  }, [router]);
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
   
+    const result = userSchema.safeParse(formData);
+    if (!result.success) {
+      toast.error(result.error.errors.map((err) => err.message).join("\n"));
+      return;
+    }
 
-// Inside handleSubmit, after login success:
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-
-  const result = userSchema.safeParse(formData);
-  if (!result.success) {
-    toast.error(result.error.errors.map((err) => err.message).join("\n"));
-    return;
-  }
-
-  try {
-    const response = await loginUser(formData).unwrap();  
-
-    // Handle session update
-    signIn("credentials", {
-      email: formData.email,
-      password: formData.password,
-      redirect: false, // Prevent redirect after sign-in, handle manually
-    });
-
-    toast.success("Login successful!");
-    router.push("/dashboard");
-  } catch (error: unknown) {
-    const apiError = error as ApiError;
-    console.error("Login Error:", apiError);
-    toast.error(apiError?.data?.message || "Login failed. Please try again.");
-  }
-};
-
+    setIsLoading(true);
   
+    try {
+      const response = await loginUser(formData).unwrap(); // ✅ Use RTK Query mutation
+
+      console.log("User from Backend", response)
+      
+      if (response) {
+        dispatch(setUser(response)); // ✅ Save user data in Redux store
+        toast.success("Login successful!");
+        router.push("/dashboard"); // Redirect to dashboard
+      }
+    } catch (error) {
+      toast.error( "Login failed. Please try again.");
+    }
+
+    setIsLoading(false);
+  };
 
 
   return (

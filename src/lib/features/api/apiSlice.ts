@@ -1,17 +1,16 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-
 export interface ApiError {
-    status: number;
-    data?: { message?: string };
-  }
-  
+  status: number;
+  data?: { message?: string };
+}
+
 // Define the base API slice
 export const api = createApi({
-  reducerPath: "api", // This is the key under which the API slice will be stored in Redux
+  reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL, // Use your backend API URL
-    credentials: "include", // Allows sending cookies (important for authentication)
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    credentials: "include", // Ensures cookies (access token) are sent
   }),
   endpoints: (builder) => ({
     loginUser: builder.mutation({
@@ -19,16 +18,45 @@ export const api = createApi({
         url: "/auth/login",
         method: "POST",
         body: credentials,
+        credentials: "include",
       }),
     }),
-    getUser: builder.query({
-      query: () => ({
-        url: "/auth/getUser",
-        method: "GET"
-      }),
+    refreshToken: builder.mutation({
+      query: () => {
+        const refreshToken = localStorage.getItem("refresh_token");
+        if (!refreshToken) throw new Error("No refresh token found");
+
+        return {
+          url: "/auth/refresh",
+          method: "POST",
+          body: { refresh_token: refreshToken },
+          credentials: "include",
+        };
+      },
+    }),
+    logoutUser: builder.mutation({
+      query: () => {
+        const refreshToken = localStorage.getItem("refresh_token");
+        if (!refreshToken) throw new Error("No refresh token found");
+
+        return {
+          url: "/auth/logout",
+          method: "POST",
+          body: { refresh_token: refreshToken },
+          credentials: "include",
+        };
+      },
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          localStorage.removeItem("refresh_token"); // Clear refresh token on success
+        } catch (error) {
+          console.error("Logout failed", error);
+        }
+      },
     }),
   }),
 });
 
-// Export the hooks for the endpoints
-export const { useLoginUserMutation, useGetUserQuery } = api;
+// Export hooks for API endpoints
+export const { useLoginUserMutation, useLogoutUserMutation, useRefreshTokenMutation } = api;

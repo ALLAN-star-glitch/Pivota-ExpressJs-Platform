@@ -2,19 +2,11 @@
 
 import { FaPlusCircle } from 'react-icons/fa'; // Icon for "Post an Ad"
 import Image from 'next/image';
-import { useSession } from 'next-auth/react'; // Importing useSession from next-auth
 
-const NavBarDashboardClient = () => {
-  // Fetch the session using next-auth
-  const { data: session } = useSession();
 
-  if (!session) {
-    // If there's no session (user not authenticated), we could redirect or show nothing
-    return null; 
-  }
-
-  // Extracting user data from session
-  const { firstName, plan } = session.user || {};
+const NavBarDashboardClient = ({firstName, plan}: {firstName: string, plan: string}) => {
+  
+ 
 
   return (
     <>

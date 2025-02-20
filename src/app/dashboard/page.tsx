@@ -1,14 +1,20 @@
 "use client";
 
-import DashboardContent from "../../components/dashboard/DashboardContent";
 import NavBarDashboard from "@/components/dashboard/NavBarDashboard";
 import Image from "next/image";
 import Link from "next/link";
-
+import DashboardContent from "@/components/dashboard/DashboardContent";
+import { useAppSelector } from "@/lib/hooks";
 import Menu from "@/components/common/Menu";
 
+
 const Dashboard = () => {
-  
+  // Get user data from Redux store using useAppSelector
+  const userRoles = useAppSelector((state) => state.auth.user?.roles || []);
+  const firstName = useAppSelector((state) => state.auth.user?.firstName || "User");
+
+  console.log("User Role from Store", userRoles)
+  console.log("First Name from Store", firstName)
 
 
   return (
@@ -30,12 +36,12 @@ const Dashboard = () => {
       <div className="flex flex-1 bg-pivotaLightGray">
         {/* LEFT - Sidebar */}
         <div className="w-[18%] bg-white rounded-2xl shadow-xl h-full sticky top-[15%] mx-6 my-4 p-4 z-50">
-          <Menu/>
+             <Menu/>
         </div>
 
-        {/* RIGHT - Main Content */}
+        {/* RIGHT - Main Content (Pass userRoles & firstName as props) */}
         <div className="w-[82%] bg-pivotaWhite flex flex-col h-full p-6 space-y-6">
-          <DashboardContent/>
+          <DashboardContent userRoles={userRoles} firstName={firstName} />
         </div>
       </div>
     </div>
