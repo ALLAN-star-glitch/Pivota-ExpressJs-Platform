@@ -63,7 +63,11 @@ export default {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+		  fontFamily: {
+			sans: "var(--font-inter)",
+			display: "var(--font-manrope)",
+		  },
   	}
   },
   plugins: [require("tailwindcss-animate")],

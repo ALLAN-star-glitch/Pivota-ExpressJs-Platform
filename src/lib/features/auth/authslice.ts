@@ -13,7 +13,7 @@ interface AuthState {
   isAuthenticated: boolean;
   userRoles: string[];
   user: User | null;
-  refresh_token: string | null; 
+  refresh_token: string | null;
   loading: boolean;
   error: string | null;
   firstName: string;
@@ -23,25 +23,19 @@ interface AuthState {
   phone: string;
 }
 
-// Load persisted state from localStorage
-const storedAuth =
-  typeof window !== "undefined" ? localStorage.getItem("authState") : null;
-
-const initialState: AuthState = storedAuth
-  ? JSON.parse(storedAuth)
-  : {
-      isAuthenticated: false,
-      userRoles: [],
-      user: null,
-      refresh_token: null, // 🔹 Added this
-      loading: false,
-      error: null,
-      firstName: "",
-      lastName: "",
-      plan: "",
-      id: "",
-      phone: "",
-    };
+const initialState: AuthState = {
+  isAuthenticated: false,
+  userRoles: [],
+  user: null,
+  refresh_token: null,
+  loading: false,
+  error: null,
+  firstName: "",
+  lastName: "",
+  plan: "",
+  id: "",
+  phone: "",
+};
 
 const authSlice = createSlice({
   name: "auth",
@@ -65,10 +59,11 @@ const authSlice = createSlice({
       state.phone = action.payload.user.phone;
       state.id = action.payload.user.id;
       state.user = action.payload.user;
-      state.refresh_token = action.payload.refresh_token; // 🔹 Ensure refresh_token is stored
+      state.refresh_token = action.payload.refresh_token;
 
-      // Persist state in localStorage
-      localStorage.setItem("authState", JSON.stringify(state));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("authState", JSON.stringify(state)); // ✅ Only run in the browser
+      }
     },
     logout: (state) => {
       state.isAuthenticated = false;
@@ -79,10 +74,11 @@ const authSlice = createSlice({
       state.plan = "";
       state.id = "";
       state.phone = "";
-      state.refresh_token = null; // 🔹 Clear refresh_token on logout
+      state.refresh_token = null;
 
-      // Clear localStorage on logout
-      localStorage.removeItem("authState");
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("authState"); // ✅ Only clear in the browser
+      }
     },
   },
 });

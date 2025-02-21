@@ -9,6 +9,9 @@ import { useDispatch} from "react-redux";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useAppSelector } from "@/lib/hooks";
+import { selectFirstName, selectUserRoles } from "@/lib/features/authSelector";
+import { logout, setUser } from "@/lib/features/auth/authslice";
+import LogoutModal from "../LogoutModal";
 
 interface MenuItem {
   icon: React.ComponentType<{ size?: number; color?: string }>; 
@@ -23,6 +26,9 @@ interface MenuSection {
   title: string;
   items: MenuItem[];
 }
+
+
+
 
 const menuItems: MenuSection[] = [
   {
@@ -68,17 +74,18 @@ const menuItems: MenuSection[] = [
   },
 ];
 
-const Menu = () => {
+const Menu: React.FC = ()  => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const dispatch = useDispatch();
   const router = useRouter()
+  const [showModal, setShowModal] = useState(false);
 
-  const handleLogout = ()=>{
-
-    router.push('/login');
-  }
+  const handleLogout = () => {
+      localStorage.removeItem("refresh_token");
+      dispatch(logout());
+      router.push("/login");
+    };
 
   useEffect(() => {
     return () => {
@@ -88,8 +95,18 @@ const Menu = () => {
 
 
    // Get user data from Redux store using useAppSelector
-    const userRoles = useAppSelector((state) => state.auth.user?.roles || []);
-    const firstName = useAppSelector((state) => state.auth.user?.firstName || "User");
+   const userRoles = useAppSelector(selectUserRoles);
+    const firstName = useAppSelector(selectFirstName) || "Loading...";
+   
+     useEffect(() => {
+       // Load persisted state from localStorage only on the client
+       if (typeof window !== "undefined") {
+         const storedAuth = localStorage.getItem("authState");
+         if (storedAuth) {
+           dispatch(setUser(JSON.parse(storedAuth)));
+         }
+       }
+     }, [dispatch]);
     
   const isFreeUser = userRoles.length === 1 && userRoles.includes("user");
 
@@ -171,30 +188,12 @@ const Menu = () => {
           </div>
         ) : null
       )}
-
-      {/* Logout Confirmation Modal */}
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
-          <div className="bg-white rounded-2xl shadow-lg p-6 max-w-sm text-center">
-            <h2 className="text-lg font-semibold text-gray-800">Confirm Logout</h2>
-            <p className="text-gray-600 mt-2">Are you sure you want to log out?</p>
-            <div className="mt-4 flex justify-center gap-4">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+<LogoutModal 
+  show={showModal}  // Pass boolean state, not function
+  onClose={() => setShowModal(false)} 
+  onConfirm={handleLogout} 
+/>
+  
     </div>
   );
 };
