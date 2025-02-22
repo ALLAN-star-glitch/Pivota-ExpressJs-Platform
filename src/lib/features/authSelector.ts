@@ -22,4 +22,10 @@ export const selectPlan = createSelector(
     selectAuth,
     (auth) => auth.user?.plan || null
   );
+
+  // Memoized selector for authentication state
+export const selectAuthentication = createSelector(
+  selectAuth,
+  (auth) => auth.isAuthenticated || false
+);
   
