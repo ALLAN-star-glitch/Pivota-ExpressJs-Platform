@@ -19,7 +19,7 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed ${isOpen ? "top-[20%]" : "top-[18%]"} left-0 h-[calc(100vh-22%)] overflow-y-auto bg-white 
+        className={`fixed ${isOpen ? "top-[20%]" : "top-[18%]"} left-0 h-[calc(100vh-30%)] overflow-y-auto bg-white 
         shadow-xl p-4 rounded-2xl transition-transform duration-300 
         ${isOpen ? "translate-x-0 z-[60]" : "-translate-x-full"} 
         lg:translate-x-0 lg:w-[15%] lg:mx-3 lg:my-4`}

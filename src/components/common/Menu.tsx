@@ -35,19 +35,19 @@ const menuItems: MenuSection[] = [
     title: "MANAGEMENT",
     items: [
       { icon: Briefcase, label: "Jobs", visible: ["employer"], subItems: [
-        { label: "Post New Job", href: "/dashboard/jobs/post" },
-        { label: "Job Applications", href: "/dashboard/jobs/applications" },
-        { label: "Active Job Listings", href: "/dashboard/jobs/active" },
+        { label: "Post Job", href: "/dashboard/jobs-listings/post-job" },
+        { label: "Job Applications", href: "/dashboard/jobs-listings/job-applications" },
+        { label: "Job Listings", href: "/dashboard/jobs-listings" },
       ] },
       { icon: Wrench, label: "Services", visible: ["serviceProvider"], subItems: [
-        { label: "Post New Service", href: "/dashboard/services/post" },
-        { label: "Service Listings", href: "/dashboard/services/listings" },
-        { label: "Service Requests", href: "/dashboard/services/requests" },
+        { label: "Post Service", href: "/dashboard/service-listings/post-service" },
+        { label: "Service Listings", href: "/dashboard/service-listings" },
+        { label: "Requests", href: "/dashboard/service-listings/requests" },
       ] },
-      { icon: Home, label: "Properties", visible: ["landlord"], subItems: [
-        { label: "Add New Property", href: "/dashboard/properties/add" },
-        { label: "Property Listings", href: "/dashboard/properties/listings" },
-        { label: "Property Inquiries", href: "/dashboard/properties/inquiries" },
+      { icon: Home, label: "House", visible: ["landlord"], subItems: [
+        { label: "Post House", href: "/dashboard/house-listings/post-house" },
+        { label: "House Listings", href: "/dashboard/house-listings" },
+        { label: "House Inquiries", href: "/dashboard/house-listings/house-inquiries" },
       ] },
     ],
   },
@@ -90,12 +90,14 @@ const Menu: React.FC = () => {
   }, [dispatch]);
 
   const userRoles = useAppSelector(selectUserRoles);
-  const visibleMenuItems = menuItems.map((section) => ({
-    ...section,
-    items: section.items.filter((item) =>
-      item.visible?.some((role) => userRoles.includes(role))
-    ),
-  }));
+  const isFreeUser = userRoles.length === 1 && userRoles.includes("user");
+
+  const visibleMenuItems = menuItems
+    .filter(section => section.title !== "EXPLORE" || isFreeUser)
+    .map(section => ({
+      ...section,
+      items: section.items.filter(item => item.visible?.some(role => userRoles.includes(role)))
+    }));
 
   return (
     <div className="mt-4 text-sm text-pivotaNavy">
@@ -119,8 +121,16 @@ const Menu: React.FC = () => {
                 </button>
               ) : (
                 <div key={item.label} className="w-full">
-                  <div
-                    onClick={() => setOpenDropdown(isOpen ? null : item.label)}
+                  <Link
+                  href={item.href || "#"} 
+                  onClick={(e) => {
+                    if (item.href) {
+                      router.push(item.href);
+                    }
+                    setOpenDropdown(isOpen ? null : item.label)
+                  }
+                }
+                  
                     className={`flex items-center justify-between gap-4 py-2 px-4 rounded-lg cursor-pointer transition-colors w-full ${
                       isOpen ? "bg-gray-200" : "hover:bg-pivotaAqua"
                     }`}
@@ -132,10 +142,10 @@ const Menu: React.FC = () => {
                     {item.subItems && (
                       isOpen ? <ChevronUp size={18} color="#008080" /> : <ChevronDown size={18} color="#008080" />
                     )}
-                  </div>
+                  </Link>
 
                   {isOpen && item.subItems && (
-                    <div className="ml-6 bg-gray-100 rounded-lg p-2 mt-2 transition-all">
+                    <div className="ml-6 bg-gray-100 p-2 mt-2 transition-all">
                       {item.subItems.map((subItem, index) => (
                         <Link
                           key={index}

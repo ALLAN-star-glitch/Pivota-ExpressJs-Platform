@@ -116,7 +116,7 @@ const handleImageDescriptionChange = (index: number, description: string) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
       <div
-        className={`relative bg-pivotaLightGray max-w-3xl w-full mx-4 p-12 rounded-lg shadow-lg bg-cover bg-center max-h-[90vh] overflow-y-auto `}
+        className={`relative bg-white max-w-3xl w-full mx-4 p-12 rounded-lg shadow-lg bg-cover bg-center max-h-[90vh] overflow-y-auto `}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute top-4 right-4">
