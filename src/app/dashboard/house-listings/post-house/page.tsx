@@ -257,7 +257,7 @@ export default function PostHousePage() {
                     <div key={index} className="flex items-center gap-4 border p-2 rounded-lg shadow">
                       <Image src={img.url} alt="House" height={24} width={24} className=" object-cover rounded-lg border" />
                       <Input
-                        placeholder="Enter image description"
+                        placeholder="Image description E.g., Sitting Room, ..."
                         value={img.description}
                         onChange={(e) => handleImageDescriptionChange(index, e.target.value)}
                         className="rounded-lg border-gray-300 focus:ring-pivotaTeal"
