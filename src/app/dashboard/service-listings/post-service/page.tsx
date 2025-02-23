@@ -34,7 +34,10 @@ export default function PostServicePage() {
   const router = useRouter();
   const userRoles = useAppSelector(selectUserRoles);
   const isServiceProvider = userRoles.includes("serviceProvider");
+
+  // Move hooks above the conditional return
   const editor = useRef(null);
+  const [serviceDetails, setServiceDetails] = useState({ description: "" });
 
   const form = useForm({
     resolver: zodResolver(serviceSchema),
@@ -49,9 +52,14 @@ export default function PostServicePage() {
 
   const onSubmit = (data: z.infer<typeof serviceSchema>) => {
     console.log("Service Posted:", data);
-    router.push("/dashboard/services"); // Redirect after posting
+    router.push("/dashboard/services");
   };
 
+  const handleDescriptionChange = (newDescription: string) => {
+    setServiceDetails((prev) => ({ ...prev, description: newDescription }));
+  };
+
+  // Do not put hooks after this
   if (!isServiceProvider) {
     return (
       <div className="p-6 text-center text-gray-600">
@@ -60,14 +68,6 @@ export default function PostServicePage() {
       </div>
     );
   }
-
-  const [serviceDetails, setServiceDetails] = useState({
-    description: "",
-  });
-
-  const handleDescriptionChange = (newDescription: string) => {
-    setServiceDetails((prev) => ({ ...prev, description: newDescription }));
-  };
 
   return (
     <div className="p-6 max-w-4xl mx-auto mt-20">

@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Image from "next/image";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -254,7 +255,7 @@ export default function PostHousePage() {
                 <div className="grid gap-4 mt-4">
                   {images.map((img, index) => (
                     <div key={index} className="flex items-center gap-4 border p-2 rounded-lg shadow">
-                      <img src={img.url} alt="House" className="w-24 h-24 object-cover rounded-lg border" />
+                      <Image src={img.url} alt="House" height={24} width={24} className=" object-cover rounded-lg border" />
                       <Input
                         placeholder="Enter image description"
                         value={img.description}
