@@ -24,7 +24,7 @@ const Sidebar = () => {
         ${isOpen ? "translate-x-0 z-[60]" : "-translate-x-full"} 
         lg:translate-x-0 lg:w-[15%] lg:mx-3 lg:my-4`}
       >
-        <Menu />
+       <Menu closeSidebar={() => setIsOpen(false)} />
       </aside>
     </>
   );

@@ -20,6 +20,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
+import { XCircle } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -41,6 +43,7 @@ const houseSchema = z.object({
   depositAmount: z.string().optional(),
   houseCondition: z.string().min(1, "House condition is required"),
   numberOfRooms: z.string().min(1, "Number of rooms is required"),
+  numberofBathrooms: z.string().min(1, "Number of bathrooms is required"),
 });
 
 export default function PostHousePage() {
@@ -64,6 +67,7 @@ export default function PostHousePage() {
     depositAmount: "",
     houseCondition: "",
     numberOfRooms: "",
+    numberofBathrooms: ""
   },
 });
 
@@ -71,12 +75,38 @@ export default function PostHousePage() {
   const [images, setImages] = useState<{ url: string; description: string }[]>([]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setImages((prev) => [...prev, { url, description: "" }]);
+    const files = e.target.files;
+    if (!files) return;
+  
+    const newImages = Array.from(files).map((file) => ({
+      url: URL.createObjectURL(file),
+      description: "",
+    }));
+  
+    // Prevent duplicate images
+    const filteredImages = newImages.filter(
+      (newImg) => !images.some((img) => img.url === newImg.url)
+    );
+  
+    if (images.length + filteredImages.length > 6) {
+      toast.warn("You can only upload upto 6 images")
+      return;
     }
+  
+    setImages((prev) => [...prev, ...filteredImages]);
+  
+    // Focus on the first empty description field
+    setTimeout(() => {
+      const descInputs = document.querySelectorAll(".image-description");
+      if (descInputs.length > 0) {
+        (descInputs[descInputs.length - filteredImages.length] as HTMLInputElement)?.focus();
+      }
+    }, 100);
+  
+    e.target.value = "";
   };
+  
+  
 
   const handleImageDescriptionChange = (index: number, desc: string) => {
     setImages((prev) => {
@@ -95,9 +125,32 @@ export default function PostHousePage() {
   };
 
   const onSubmit = (data: z.infer<typeof houseSchema>) => {
+    if (images.some((img) => !img.description.trim())) {
+      alert("Please provide a description for all images.");
+  
+      // Highlight missing descriptions
+     setTimeout(() => {
+  const descInputs = document.querySelectorAll(".image-description");
+
+  descInputs.forEach((input) => {
+    const inputElement = input as HTMLInputElement; // ✅ Correctly cast the element
+    if (!inputElement.value.trim()) {
+      inputElement.classList.add("border-red-500");
+      inputElement.focus(); // ✅ No more TypeScript error
+    } else {
+      inputElement.classList.remove("border-red-500");
+    }
+  });
+}, 100);
+
+  
+      return;
+    }
+  
     console.log("House Posted:", { ...data, images });
     router.push("/dashboard/houses");
   };
+  
 
   if (!isLandlord) {
     return (
@@ -200,9 +253,19 @@ export default function PostHousePage() {
                   <FormMessage />
                 </FormItem>
               )} />
+              <FormField control={form.control} name="numberofBathrooms" render={({ field }) => (
+                <FormItem>
+                  <label className="text-sm font-medium text-gray-700">Number of Bathrooms *</label>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter number of bathrooms" required />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+             
               
 
-              <div className="grid grid-cols-2 gap-6 items-center">
+              <div className="grid grid-cols-1 gap-6 items-center">
                 <FormField control={form.control} name="chargeAmount" render={({ field }) => (
                   <FormItem className="flex items-center gap-4">
                     <label className="text-sm font-medium text-gray-700 w-1/3">Charge Amount *</label>
@@ -214,7 +277,7 @@ export default function PostHousePage() {
                 )} />
               </div>
 
-              <div className="grid grid-cols-2 gap-6 items-center">
+              <div className="grid grid-cols-1 gap-6 items-center">
                 <FormField control={form.control} name="chargePeriod" render={({ field }) => (
                   <FormItem className="flex items-center gap-4">
                     <label className="text-sm font-medium text-gray-700 w-1/3">Charge Period *</label>
@@ -251,23 +314,41 @@ export default function PostHousePage() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-700">House Images</label>
+              <label className="text-sm font-medium text-gray-700">House Images (Max: 6)</label>
                 <div className="grid gap-4 mt-4">
                   {images.map((img, index) => (
-                    <div key={index} className="flex items-center gap-4 border p-2 rounded-lg shadow">
-                      <Image src={img.url} alt="House" height={24} width={24} className=" object-cover rounded-lg border" />
+                    <div key={index} className="flex flex-col sm:flex-row relative items-center gap-4 border p-2 rounded-lg shadow">
+                      <Image src={img.url} alt="House" height={80} width={80} className="object-cover rounded-lg border" />
                       <Input
-                        placeholder="Image description E.g., Sitting Room, ..."
+                        placeholder="E.g., Sitting Room, ..."
                         value={img.description}
                         onChange={(e) => handleImageDescriptionChange(index, e.target.value)}
-                        className="rounded-lg border-gray-300 focus:ring-pivotaTeal"
+                        className="image-description rounded-lg border-gray-300 focus:ring-pivotaTeal"
                       />
-                      <Button type="button" variant="destructive" onClick={() => handleRemoveImage(index)}>Remove</Button>
+                      <XCircle
+                        className="absolute top-0 right-0 text-red-500 cursor-pointer hover:scale-110"
+                        size={20}
+                        onClick={() => handleRemoveImage(index)}
+                      />
                     </div>
                   ))}
+                  <p className="text-sm text-gray-600 mt-2">Please provide a brief description for each image.</p>
                 </div>
+                {images.length >= 6 && (
+                  <p className="text-red-500 text-sm mt-2">You can only upload up to 6 images.</p>
+                )}
                 <Button type="button" onClick={() => document.getElementById('imageInput')?.click()} className="mt-4 bg-pivotaTeal text-white rounded-lg shadow">Add Image</Button>
-                <Button type="button" variant="destructive" onClick={handleRemoveAllImages} className="mt-4 ml-2">Remove All</Button>
+                {images.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={handleRemoveAllImages}
+                    className="mt-4 ml-2"
+                  >
+                    Remove All
+                  </Button>
+                )}
+
                 <input id="imageInput" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
               </div>
 
@@ -276,6 +357,7 @@ export default function PostHousePage() {
           </Form>
         </CardContent>
       </Card>
+      <ToastContainer/>
     </div>
   );
 }

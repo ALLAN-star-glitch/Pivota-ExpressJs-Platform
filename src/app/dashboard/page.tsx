@@ -1,6 +1,6 @@
 import NavBarDashboard from "@/components/dashboard/NavBarDashboard";
 import DashboardContent from "@/components/dashboard/DashboardContent";
-import Sidebar from "@/components/Sidebar";
+
 
 const Dashboard = () => {
   return (

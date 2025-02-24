@@ -68,7 +68,7 @@ const menuItems: MenuSection[] = [
   },
 ];
 
-const Menu: React.FC = () => {
+const Menu: React.FC<{ closeSidebar?: () => void }> = ({ closeSidebar }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
@@ -126,6 +126,7 @@ const Menu: React.FC = () => {
                   onClick={(e) => {
                     if (item.href) {
                       router.push(item.href);
+                      closeSidebar?.(); // Close sidebar after navigation
                     }
                     setOpenDropdown(isOpen ? null : item.label)
                   }
@@ -151,6 +152,7 @@ const Menu: React.FC = () => {
                           key={index}
                           href={subItem.href}
                           className="block px-4 py-2 text-gray-700 hover:bg-teal-200 rounded-md"
+                          onClick={closeSidebar} // Close sidebar when clicking a sub-item
                         >
                           {subItem.label}
                         </Link>

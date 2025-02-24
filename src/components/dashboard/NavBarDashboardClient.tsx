@@ -40,7 +40,7 @@ const NavBarDashboardClient = () => {
         <Link href="/" className="cursor-pointer">
           <div className="flex items-center gap-2">
             <Image src="/mylogo.png" alt="Pivota Logo" width={90} height={60} />
-            <span className="text-xl font-bold text-pivotaTeal">Pivota</span>
+            <span className="text-xl font-bold text-pivotaTeal">Dashboard</span>
           </div>
         </Link>
 
