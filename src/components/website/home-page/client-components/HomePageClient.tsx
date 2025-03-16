@@ -21,22 +21,7 @@ export default function HomePage() {
 
   return (
     <>
-      <Head>
-        <title>Pivota - Find Jobs, Services, and Homes in Africa</title>
-        <meta
-          name="description"
-          content="Pivota connects job seekers, service providers, landlords, and tenants across Africa. Find jobs, services, and real estate listings easily."
-        />
-        <meta name="keywords" content="jobs in Africa, hire services, real estate Kenya, find tenants, Pivota platform" />
-        <meta name="author" content="Pivota" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta property="og:title" content="Pivota - Find Jobs, Services, and Homes in Africa" />
-        <meta
-          property="og:description"
-          content="Pivota is the ultimate platform for job seekers, service providers, and real estate in Africa."
-        />
-        <meta property="og:type" content="website" />
-      </Head>
+     
 
       <div className="bg-pivotaLightGray min-h-screen">
         {/* Hero Section */}

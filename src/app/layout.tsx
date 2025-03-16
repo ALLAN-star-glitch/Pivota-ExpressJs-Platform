@@ -19,9 +19,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
+
 export const metadata: Metadata = {
-  title: "Pivotal",
-  description: "Best Connection",
+  title: "Pivota - Find Jobs, Services, and Homes in Africa",
+  description: "Pivota connects job seekers, service providers, landlords, and tenants across Africa. Find jobs, services, and real estate listings easily.",
+  keywords: "jobs in Africa, hire services, real estate Kenya, find tenants, Pivota platform",
+  openGraph: {
+    title: "Pivota - Find Jobs, Services, and Homes in Africa",
+    description: "Pivota is the ultimate platform for job seekers, service providers, and real estate in Africa.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -29,6 +37,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  
   
   
   return (
