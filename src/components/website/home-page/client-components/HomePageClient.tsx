@@ -50,7 +50,7 @@ export default function HomePage() {
               Find opportunities and connect with the right people across Africa.
             </p>
             <p className="mt-2 text-lg font-semibold italic text-pivotaCoral">
-              "Pata fursa na uunganishwe na watu sahihi kote Afrika"
+              Pata fursa na uunganishwe na watu sahihi kote Afrika
             </p>
             
             <div className="mt-6">
