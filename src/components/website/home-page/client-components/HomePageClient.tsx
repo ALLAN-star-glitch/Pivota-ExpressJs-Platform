@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Head from "next/head";
-import Lottie from "lottie-react";
 import AvailableListings from "./AvailableListings";
 import SearchSection from "./SearchSection";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export default function HomePage() {
   const [animationData, setAnimationData] = useState(null);
