@@ -2,199 +2,101 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { FaBriefcase, FaHome, FaTools, FaStar, FaUsers, FaRocket, FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import SearchSection from "./SearchSection";
+import Head from "next/head";
+import Lottie from "lottie-react";
 import AvailableListings from "./AvailableListings";
+import SearchSection from "./SearchSection";
+import Image from "next/image";
+import Link from "next/link";
 
-const slides = [
-  {
-    image: "/jobman.webp",
-    title: "Find Your Dream Job",
-    description: "Explore thousands of job listings from top companies worldwide.",
-    buttonText: "Find Jobs",
-    link: "/jobs",
-  },
-  {
-    image: "/serviceman.webp",
-    title: "Connect with Service Providers",
-    description: "Find trusted electricians, plumbers, tutors, and more in your area.",
-    buttonText: "Find Services",
-    link: "/services",
-  },
-  {
-    image: "/rentalhouse.webp",
-    title: "Discover Your Perfect Home",
-    description: "Browse rental and property listings tailored to your needs.",
-    buttonText: "Browse Listings",
-    link: "/housing",
-  },
-  {
-    image: "/community.webp",
-    title: "Expand Your Network",
-    description: "Join a growing community of professionals and service providers.",
-    buttonText: "Join Now",
-    link: "/signup",
-  },
-];
-
-export default function HomePageClient() {
-  const router = useRouter();
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const nextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + slides.length) % slides.length);
-  };
+export default function HomePage() {
+  const [animationData, setAnimationData] = useState(null);
 
   useEffect(() => {
-    const interval = setInterval(nextSlide, 5000); // Auto-slide every 5 seconds
-    return () => clearInterval(interval);
+    fetch("/hero-animation.json")
+      .then((res) => res.json())
+      .then((data) => setAnimationData(data))
+      .catch((err) => console.error("Failed to load animation:", err));
   }, []);
 
   return (
-    <div className="mt-20">
-      {/* Hero Section with Scrolling Images */}
-      <div className="relative w-full h-[600px] overflow-hidden">
-        {/* Background Image Transition */}
-        <motion.div
-          key={currentIndex}
-          className="absolute inset-0 w-full h-full"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        >
-          <Image
-            src={slides[currentIndex].image}
-            alt={slides[currentIndex].title}
-            layout="fill"
-            objectFit="cover"
-            className="transition-opacity duration-1000"
-          />
-        </motion.div>
+    <>
+      <Head>
+        <title>Pivota - Find Jobs, Services, and Homes in Africa</title>
+        <meta
+          name="description"
+          content="Pivota connects job seekers, service providers, landlords, and tenants across Africa. Find jobs, services, and real estate listings easily."
+        />
+        <meta name="keywords" content="jobs in Africa, hire services, real estate Kenya, find tenants, Pivota platform" />
+        <meta name="author" content="Pivota" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:title" content="Pivota - Find Jobs, Services, and Homes in Africa" />
+        <meta
+          property="og:description"
+          content="Pivota is the ultimate platform for job seekers, service providers, and real estate in Africa."
+        />
+        <meta property="og:type" content="website" />
+      </Head>
 
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center text-center px-6">
-          <motion.div
-            key={currentIndex}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white bg-opacity-20 backdrop-blur-lg p-8 rounded-2xl shadow-lg max-w-2xl text-white"
-          >
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-4">{slides[currentIndex].title}</h1>
-            <p className="text-lg mb-6">{slides[currentIndex].description}</p>
-            <button
-              onClick={() => router.push(slides[currentIndex].link)}
-              className="bg-pivotaGold text-black px-6 py-3 rounded-full font-bold shadow-md hover:bg-yellow-400 transition"
-            >
-              {slides[currentIndex].buttonText}
-            </button>
-          </motion.div>
-        </div>
-
-        {/* Navigation Buttons */}
-        <button
-          onClick={prevSlide}
-          className="absolute left-5 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 p-3 rounded-full shadow-md hover:bg-opacity-80 transition"
-        >
-          <FaArrowLeft className="text-2xl text-pivotaTeal" />
-        </button>
-
-        <button
-          onClick={nextSlide}
-          className="absolute right-5 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 p-3 rounded-full shadow-md hover:bg-opacity-80 transition"
-        >
-          <FaArrowRight className="text-2xl text-pivotaTeal" />
-        </button>
-
-        {/* Dots Indicator */}
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {slides.map((_, index) => (
-            <div
-              key={index}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentIndex ? "bg-pivotaGold scale-125" : "bg-gray-400"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-
-      <SearchSection/>
-
-      {/* What We Offer Section */}
-      <div className="py-16 bg-pivotaLightGray">
-        <h2 className="text-4xl font-semibold text-pivotaNavy mb-6">What We Offer</h2>
-        <p className="text-lg text-pivotaNavy mb-12">
-          We connect you to the best opportunities in the job market, reliable services, and quality housing.
-          Explore our diverse categories to find exactly what you need.
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <FaBriefcase className="text-pivotaTeal text-4xl mb-4" />
-            <h3 className="text-xl font-semibold text-pivotaNavy">Job Opportunities</h3>
-            <p className="text-sm text-pivotaNavy">
-              Discover full-time, part-time, freelance, and remote job openings across various industries.
+      <div className="bg-pivotaLightGray min-h-screen">
+        {/* Hero Section */}
+        <section className="relative flex flex-col-reverse md:flex-row items-center justify-between px-6 md:px-16 py-12 md:py-20 bg-gradient-to-r from-white to-pivotaLightGray min-h-[70vh] mt-10">
+          {/* Text Section */}
+          <div className="md:w-1/2 text-center md:text-left">
+            <h1 className="text-4xl md:text-6xl font-bold text-pivotaNavy leading-tight">
+              Connecting You to <span className="text-pivotaTeal">Jobs</span>, <span className="text-pivotaCoral">Services</span>, and <span className="text-pivotaGold">Homes</span>
+            </h1>
+            <p className="mt-4 text-lg md:text-xl text-pivotaTeal">
+              Find opportunities and connect with the right people across Africa.
             </p>
-            <button className="mt-4 text-pivotaTeal hover:underline">Explore Jobs</button>
+            <p className="mt-2 text-lg font-semibold italic text-pivotaCoral">
+              "Pata fursa na uunganishwe na watu sahihi kote Afrika"
+            </p>
+            
+            <div className="mt-6">
+            <Link href="/explore" className="px-6 py-3 bg-pivotaCoral text-white font-bold text-lg rounded-lg shadow-lg hover:bg-pivotaNavy transition">
+                Get Started
+              </Link>
+            </div>
+            <div className="mt-6 flex justify-center md:justify-start">
+              <SearchSection />
+            </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <FaTools className="text-pivotaTeal text-4xl mb-4" />
-            <h3 className="text-xl font-semibold text-pivotaNavy">Professional Services</h3>
-            <p className="text-sm text-pivotaNavy">
-              Access a wide range of services from skilled professionals in fields like plumbing, electrical work, tutoring, and more.
-            </p>
-            <button className="mt-4 text-pivotaTeal hover:underline">Find Services</button>
+          {/* Animation Section */}
+          <div className="md:w-1/2 flex justify-center items-end">
+            {animationData ? (
+              <Lottie animationData={animationData} loop autoplay className="w-[90%] md:w-[500px] h-auto" />
+            ) : (
+              <p className="text-pivotaTeal">Loading animation...</p>
+            )}
           </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <FaHome className="text-pivotaTeal text-4xl mb-4" />
-            <h3 className="text-xl font-semibold text-pivotaNavy">Housing & Rentals</h3>
-            <p className="text-sm text-pivotaNavy">
-              Find the perfect rental home or browse properties for sale in various locations.
-            </p>
-            <button className="mt-4 text-pivotaTeal hover:underline">Browse Housing</button>
-          </div>
-        </div>
-      </div>
+        </section>
 
         {/* Available Listings Section */}
         <AvailableListings />
 
-    
+        {/* Bottom Section with Image and Content */}
+        <section className="flex flex-col md:flex-row items-center justify-between px-6 md:px-16 py-12 bg-white">
+          {/* Left Side - Image */}
+          <div className="md:w-1/2 flex justify-center">
+            <Image src="/happy-client.png" alt="Bottom Section" width={500} height={300} className="rounded-lg shadow-lg" />
+          </div>
 
-      {/* Membership Plans */}
-      <div className="py-16 px-8 text-center">
-        <h2 className="text-4xl font-bold mb-6 text-pivotaNavy">Choose Your Plan</h2>
-        <div className="grid md:grid-cols-4 gap-8">
-          <FeatureCard icon={FaUsers} title="Free Plan" description="Basic access at no cost." color="pivotaAqua" />
-          <FeatureCard icon={FaStar} title="Bronze Plan" description="KSH 500 for 3 months - 1 premium role." color="pivotaTeal" />
-          <FeatureCard icon={FaStar} title="Silver Plan" description="KSH 900 for 3 months - 2 premium roles." color="pivotaPurple" />
-          <FeatureCard icon={FaRocket} title="Gold Plan" description="KSH 1500 for 6 months - All premium roles." color="pivotaGold" />
-        </div>
+          {/* Right Side - Content */}
+          <div className="md:w-1/2 mt-6 md:mt-0 text-center md:text-left">
+            <h2 className="text-3xl font-bold text-pivotaNavy">Explore More Opportunities</h2>
+            <p className="mt-4 text-lg text-pivotaTeal">
+              Discover more jobs, services, and rental opportunities tailored for you. Join Pivota today and expand your reach across Africa.
+            </p>
+            <div className="mt-6">
+              <Link href="/explore" className="px-6 py-3 bg-pivotaCoral text-white font-bold text-lg rounded-lg shadow-lg hover:bg-pivotaNavy transition">
+               Join Pivota
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
+    </>
   );
 }
-
-const FeatureCard = ({ icon: Icon, title, description, color }: { icon: React.ElementType; title: string; description: string; color: string }) => (
-  <motion.div className="bg-white text-pivotaNavy p-6 rounded-2xl shadow-lg">
-    <Icon className={`text-6xl text-${color} mx-auto mb-4`} />
-    <h3 className="text-xl font-semibold mb-2">{title}</h3>
-    <p className="text-sm">{description}</p>
-  </motion.div>
-);
-
-const Testimonial = ({ name, feedback }: {name: string; feedback: string}) => (
-  <motion.div className="bg-white text-pivotaNavy p-6 rounded-2xl shadow-lg my-6 max-w-lg mx-auto">
-    <p className="text-lg italic">“{feedback}”</p>
-    <h3 className="text-xl font-semibold mt-4">- {name}</h3>
-  </motion.div>
-);

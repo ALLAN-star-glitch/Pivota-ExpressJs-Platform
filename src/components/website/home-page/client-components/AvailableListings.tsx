@@ -57,14 +57,22 @@ export default function AvailableListings() {
   const [activeCategory, setActiveCategory] = useState<keyof typeof availableListings>(categories[0]);
 
   return (
-    <div className="py-8 px-6 md:px-12 lg:px-20 bg-pivotaLightGray">
-      <h2 className="text-3xl sm:text-4xl font-bold text-pivotaNavy text-center mb-8 sm:mb-12">Available Listings</h2>
+    <section className="relative w-full h-auto py-16 px-6 md:px-12 lg:px-20 overflow-hidden">
+      {/* 🔹 Overlay */}
+      <div className="absolute inset-0 bg-black/60 z-[-1]"></div>
+
+      {/* 🔹 Content */}
+      <h2 className="text-3xl sm:text-4xl font-bold text-black text-center mb-8 sm:mb-12">
+        Available Listings
+      </h2>
+
+      {/* 🔹 Categories */}
       <div className="flex flex-wrap justify-center space-x-4 sm:space-x-6 mb-8">
         {categories.map((category) => (
           <motion.button
             key={category}
             className={`px-4 sm:px-6 py-2 rounded-full text-lg sm:text-xl font-medium transition-all ${
-              activeCategory === category ? "bg-pivotaTeal text-white shadow-md" : "bg-white text-pivotaNavy border border-pivotaTeal"
+              activeCategory === category ? "bg-pivotaGold text-pivotaNavy shadow-md" : "bg-white text-pivotaNavy border border-pivotaGold"
             }`}
             onClick={() => setActiveCategory(category)}
             whileTap={{ scale: 0.9 }}
@@ -76,53 +84,40 @@ export default function AvailableListings() {
           </motion.button>
         ))}
       </div>
+
+      {/* 🔹 Listings */}
       <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-        {availableListings[activeCategory].map((item, index) => {
-          return (
-            <motion.div
-              key={index}
-              className="bg-white/80 backdrop-blur-md text-pivotaNavy p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 flex flex-col items-center"
-              whileHover={{ scale: 1.05 }}
-            >
-              <Image
-                src={item.image}
-                alt={item.title}
-                width={200}
-                height={200}
-                className="w-20 h-20 object-cover rounded-lg mb-3"
-              />
-              {activeCategory === "Jobs" && (
-                <>
-                  <h4 className="font-semibold text-lg sm:text-xl mb-2">{(item as JobListing).title}</h4>
-                  <p className="text-sm text-gray-600">{(item as JobListing).location}</p>
-                  <p className="text-sm"><strong>Salary:</strong> {(item as JobListing).salary}</p>
-                  <p className="text-sm"><strong>Type:</strong> {(item as JobListing).type}</p>
-                </>
-              )}
-              {activeCategory === "Service Providers" && (
-                <>
-                  <h4 className="font-semibold text-lg sm:text-xl mb-2">{(item as ServiceProviderListing).name}</h4>
-                  <p className="text-sm text-gray-600"><strong>Profession:</strong> {(item as ServiceProviderListing).title}</p>
-                  <p className="text-sm"><strong>Location:</strong> {(item as ServiceProviderListing).location}</p>
-                  <p className="text-sm"><strong>Rate:</strong> {(item as ServiceProviderListing).rate}</p>
-                  <p className="text-sm"><strong>Availability:</strong> {(item as ServiceProviderListing).availability}</p>
-                </>
-              )}
-              {activeCategory === "Housing" && (
-                <>
-                  <h4 className="font-semibold text-lg sm:text-xl mb-2">{(item as HousingListing).title}</h4>
-                  <p className="text-sm text-gray-600">{(item as HousingListing).location}</p>
-                  <p className="text-sm"><strong>Price:</strong> {(item as HousingListing).price}</p>
-                  <p className="text-sm"><strong>Type:</strong> {(item as HousingListing).type}</p>
-                </>
-              )}
-            </motion.div>
-          );
-        })}
+        {availableListings[activeCategory].map((item, index) => (
+          <motion.div
+            key={index}
+            className="bg-white/80 backdrop-blur-lg text-pivotaNavy p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all border border-gray-200 flex flex-col items-center"
+            whileHover={{ scale: 1.05 }}
+          >
+            <Image
+              src={item.image}
+              alt={item.title}
+              width={200}
+              height={200}
+              className="w-20 h-20 object-cover rounded-lg mb-3"
+            />
+            <h4 className="font-semibold text-lg sm:text-xl mb-2">{(item as any).title || (item as any).name}</h4>
+            <p className="text-sm text-gray-600">{(item as any).location}</p>
+            {activeCategory === "Jobs" && <p className="text-sm"><strong>Salary:</strong> {(item as JobListing).salary}</p>}
+            {activeCategory === "Jobs" && <p className="text-sm"><strong>Type:</strong> {(item as JobListing).type}</p>}
+            {activeCategory === "Service Providers" && <p className="text-sm"><strong>Rate:</strong> {(item as ServiceProviderListing).rate}</p>}
+            {activeCategory === "Service Providers" && <p className="text-sm"><strong>Availability:</strong> {(item as ServiceProviderListing).availability}</p>}
+            {activeCategory === "Housing" && <p className="text-sm"><strong>Price:</strong> {(item as HousingListing).price}</p>}
+            {activeCategory === "Housing" && <p className="text-sm"><strong>Type:</strong> {(item as HousingListing).type}</p>}
+          </motion.div>
+        ))}
       </motion.div>
+
+      {/* 🔹 View More Button */}
       <div className="flex justify-center mt-8 sm:mt-12">
-        <button className="px-6 py-3 bg-pivotaTeal text-white font-semibold rounded-lg shadow-md hover:bg-pivotaNavy transition-all">View More</button>
+        <button className="px-6 py-3 bg-pivotaGold text-pivotaNavy font-semibold rounded-lg shadow-md hover:bg-pivotaNavy hover:text-white transition-all">
+          View More
+        </button>
       </div>
-    </div>
+    </section>
   );
 }
