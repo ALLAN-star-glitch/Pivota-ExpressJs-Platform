@@ -65,7 +65,7 @@ export default function HomePage() {
         <section className="flex flex-col md:flex-row items-center justify-between px-6 md:px-16 py-12 bg-white">
           {/* Left Side - Image */}
           <div className="md:w-1/2 flex justify-center">
-            <Image src="/happy-client.png" alt="Bottom Section" width={500} height={300} className="rounded-lg shadow-lg" />
+            <Image src="/Happy Clients.png" alt="Bottom Section" width={500} height={300} className="rounded-lg shadow-lg" />
           </div>
 
           {/* Right Side - Content */}
