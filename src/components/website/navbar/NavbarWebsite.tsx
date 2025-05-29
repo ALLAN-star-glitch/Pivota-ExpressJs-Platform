@@ -31,11 +31,11 @@ const NavbarWebsite: React.FC = () => {
   }, []);
 
   const menuItems = [
-    { name: "Services Providers", path: "/services-providers", icon: <FaTools size={24} /> },
-    { name: "Jobs", path: "/jobs", icon: <FaBriefcase size={24} /> },
-    { name: "Houses", path: "/houses", icon: <FaHome size={24} /> },
-    { name: "About", path: "/about", icon: <FaInfoCircle size={24} /> },
-    { name: "Pricing", path: "/pricing", icon: <FaDollarSign size={24} /> }
+    { name: "Services Providers", path: "/services-providers"},
+    { name: "Jobs", path: "/jobs"},
+    { name: "Houses", path: "/houses" },
+    { name: "About", path: "/about"},
+    { name: "Pricing", path: "/pricing"}
   ];
 
   // Hide loading bar when pathname changes (indicating navigation is complete)
@@ -79,7 +79,7 @@ const NavbarWebsite: React.FC = () => {
                 router.push(item.path);
               }}
             >
-              {item.icon} <span>{item.name}</span>
+              <span>{item.name}</span>
             </Button>
           ))}
         </div>
@@ -133,7 +133,7 @@ const NavbarWebsite: React.FC = () => {
                 router.push(item.path);
                 setIsMobileMenuOpen(false);
               }}>
-                {item.icon} <span>{item.name}</span>
+                <span>{item.name}</span>
               </Button>
             ))}
           </div>

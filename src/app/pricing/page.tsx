@@ -82,7 +82,7 @@ const onSubmit = async (data: FieldValues) => {
     password: formData.password,
     confirmPassword: formData.confirmPassword,
     phone: formData.phone,
-    plan: selectedPlan === "free" ? "free" : selectedPlan === "premium1" ? "bronze" : selectedPlan === "premium2" ? "silver" : "gold",
+    plan: selectedPlan === "free" ? "" : selectedPlan === "premium1" ? "bronze" : selectedPlan === "premium2" ? "silver" : "gold",
     roles: selectedRoles,
   };
 
